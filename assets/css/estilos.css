@@ -1,4 +1,5 @@
-
+/* ================= PLACEHOLDER DE IMÁGENES =================
+   Estilos para imágenes de ejemplo y espacios reservados. */
 .placeholder-img {
     width: 64px;
     height: 64px;
@@ -21,7 +22,9 @@
         transparent 12px 24px
     );
 }
-/* === Temas de accesibilidad === */
+/* ================= TEMAS DE ACCESIBILIDAD =================
+   Define los estilos para los temas claro, oscuro y default.
+   Permite alternar el fondo y color de texto para mejor legibilidad. */
 body.tema-default {
     background: #181A1B;
     color: #f5f5f5;
@@ -69,17 +72,19 @@ body.tema-oscuro .btn { color: #e0e0e0 !important; }
 body {
     font-family: 'Segoe UI', Arial, sans-serif;
 }
-
+/* ================= LOGO =================
+   Estilo para el logo de la tienda */
 .logo {
     border-radius: 8px;
     box-shadow: 0 0 8px #0d6efd;
 }
-
+/* ================= NOMBRE DE LA TIENDA ================= */
 .nombre-tienda {
     color: #0d6efd;
     letter-spacing: 1px;
 }
-
+/* ================= MENÚ DE NAVEGACIÓN =================
+   Estilos para los enlaces del menú principal */
 .menu-navegacion .nav-link {
     color: #f5f5f5;
     transition: color 0.2s;
@@ -87,11 +92,12 @@ body {
 .menu-navegacion .nav-link:hover {
     color: #0d6efd;
 }
-
+/* ================= POSICIÓN DEL ICONO CARRITO ================= */
 .posicion-carrito {
     margin-left: 16px;
 }
-
+/* ================= SECCIÓN HERO =================
+   Fondo degradado y sombra para destacar la sección principal */
 .hero-section {
     background: linear-gradient(90deg, #181A1B 60%, #0d6efd 100%);
     box-shadow: 0 4px 32px #0d6efd44;
@@ -99,12 +105,13 @@ body {
 .sombra-hero {
     box-shadow: 0 0 32px #0d6efd88;
 }
-
+/* ================= TÍTULOS DE SECCIONES ================= */
 .seccion-productos-destacados h2,
 .seccion-productos h2 {
     color: #0d6efd;
 }
-
+/* ================= TARJETAS DE PRODUCTO =================
+   Estilos para las tarjetas de productos y efecto hover */
 .tarjeta-producto {
     border: 2px solid #0d6efd;
     box-shadow: 0 2px 12px #0d6efd22;
@@ -114,7 +121,7 @@ body {
     transform: scale(1.03);
     box-shadow: 0 4px 24px #0d6efd44;
 }
-
+/* ================= PRECIO Y BOTÓN AGREGAR AL CARRITO ================= */
 .precio-producto {
     color: #0d6efd;
 }
@@ -126,17 +133,18 @@ body {
     background: #0d6efd;
     color: #fff;
 }
-
+/* ================= FOOTER ================= */
 footer {
     border-top: 2px solid #0d6efd;
     background: #181A1B;
 }
-
+/* ================= MENÚ ADMINISTRADOR ================= */
 .menu-admin {
     min-height: 300px;
     border-right: 2px solid #0d6efd;
 }
-
+/* ================= VALIDACIÓN DE FORMULARIOS =================
+   Colorea los campos según su validez */
 .formulario-registro .form-control:invalid,
 .formulario-login .form-control:invalid,
 .formulario-contacto .form-control:invalid,
@@ -144,7 +152,6 @@ footer {
 .formulario-nuevo-usuario .form-control:invalid {
     border-color: #dc3545;
 }
-
 .formulario-registro .form-control:valid,
 .formulario-login .form-control:valid,
 .formulario-contacto .form-control:valid,
@@ -152,21 +159,20 @@ footer {
 .formulario-nuevo-usuario .form-control:valid {
     border-color: #198754;
 }
-
+/* ================= BOTONES PRINCIPALES ================= */
 .boton-ver-productos,
 .boton-ver-blog {
     border-radius: 20px;
     font-weight: 600;
 }
-
 .boton-login,
 .boton-registro,
 .boton-contacto {
     border-radius: 20px;
     font-weight: 600;
 }
-
-/* Responsive */
+/* ================= RESPONSIVE =================
+   Ajusta el menú y el panel admin en pantallas pequeñas */
 @media (max-width: 768px) {
     .menu-navegacion ul {
         flex-direction: column;
@@ -175,15 +181,19 @@ footer {
         min-height: 100px;
     }
 }
-
+/* ================= IMÁGENES ESPECÍFICAS =================
+   Ajustes para imágenes individuales */
 #mouse-gamer {
     width: auto;
-
     height: auto;
 }
-
 #img-ssd {
     width: auto;
-
     height: 500px;
 }
+/* ================= RESUMEN DE MEJORAS =================
+   - Se agregaron comentarios explicativos por bloque y clase.
+   - Se mejoró la organización y legibilidad de los estilos.
+   - Se mantuvieron los estilos de accesibilidad y responsividad.
+   - Se agregaron descripciones para facilitar el mantenimiento.
+*/

@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -18,11 +17,10 @@
     </style>
 </head>
 <body class="fondo-oscuro">
-    <!-- Header (copiar igual al index) -->
     <header class="bg-dark text-white py-3">
         <div class="container d-flex justify-content-between align-items-center">
             <a href="index.html" class="d-flex align-items-center text-decoration-none">
-                <img src="assets/img/1757355736.png" alt="Logo TechNova Store" class="logo me-2" height="48" />
+                    <img src="assets/img/1757355736.png" alt="Logo TechNova Store" class="logo me-2" height="48" /> <!-- Logo de la tienda -->
                 <span class="fs-3 fw-bold nombre-tienda">TechNova Store</span>
             </a>
             <nav class="menu-navegacion">
@@ -37,7 +35,7 @@
             </nav>
             <div class="d-flex align-items-center">
                 <div class="posicion-carrito">
-                    <a href="carrito.html" class="text-white position-relative" aria-label="Ver carrito">
+                        <a href="carrito.html" class="text-white position-relative" aria-label="Ver carrito"> <!-- Enlace al carrito -->
                         <i class="bi bi-bag fs-4"></i>
                         <span id="contador-carrito" class="badge bg-danger position-absolute top-0 start-100 translate-middle">0</span>
                     </a>
@@ -50,10 +48,10 @@
     </header>
 
     <main class="container py-5">
-        <h2 class="text-center text-white mb-4">Carrito de Compras</h2>
+        <!-- ================= MAIN: Contenido principal del carrito ================= -->
+        <h2 class="text-center text-white mb-4">Carrito de Compras</h2> <!-- Título principal de la página de carrito -->
 
-        <!-- Estado vacío (solo estética) -->
-        <section class="mb-5">
+        <section id="carrito-vacio" class="mb-5 d-none">
             <div class="card bg-dark text-white border-primary">
                 <div class="card-body text-center py-5">
                     <i class="bi bi-bag fs-1 d-block mb-3"></i>
@@ -64,9 +62,7 @@
             </div>
         </section>
 
-        <!-- Estado con items (maqueta estática) -->
-        <!-- Nota: dejar montado para referencia visual; no hay lógica. -->
-        <section class="row g-4">
+        <section id="carrito-con-items" class="row g-4">
             <div class="col-lg-8">
                 <div class="table-responsive">
                     <table class="table table-dark table-borderless align-middle">
@@ -79,57 +75,7 @@
                                 <th class="text-center">Acción</th>
                             </tr>
                         </thead>
-                        <tbody>
-                            <tr class="border-top">
-                                <td>
-                                    <div class="d-flex align-items-center gap-3">
-                                        <div class="placeholder-img" aria-hidden="true"></div>
-                                        <div>
-                                            <div class="fw-semibold">Mouse Gamer RGB</div>
-                                            <small class="text-secondary">Variante: —</small>
-                                        </div>
-                                    </div>
-                                </td>
-                                <td class="text-center">$19.990</td>
-                                <td class="text-center">
-                                    <div class="d-inline-flex align-items-center gap-2">
-                                        <button type="button" class="btn btn-outline-primary btn-sm" aria-label="Disminuir" disabled>−</button>
-                                        <input type="text" class="form-control form-control-sm text-center bg-dark text-white border-primary" value="1" aria-label="Cantidad" readonly>
-                                        <button type="button" class="btn btn-outline-primary btn-sm" aria-label="Aumentar" disabled>+</button>
-                                    </div>
-                                </td>
-                                <td class="text-end">$19.990</td>
-                                <td class="text-center">
-                                    <button type="button" class="btn btn-outline-danger btn-sm" aria-label="Eliminar" disabled>
-                                        <i class="bi bi-trash"></i>
-                                    </button>
-                                </td>
-                            </tr>
-                            <tr class="border-top">
-                                <td>
-                                    <div class="d-flex align-items-center gap-3">
-                                        <div class="placeholder-img" aria-hidden="true"></div>
-                                        <div>
-                                            <div class="fw-semibold">Teclado Mecánico LED</div>
-                                            <small class="text-secondary">Variante: —</small>
-                                        </div>
-                                    </div>
-                                </td>
-                                <td class="text-center">$39.990</td>
-                                <td class="text-center">
-                                    <div class="d-inline-flex align-items-center gap-2">
-                                        <button type="button" class="btn btn-outline-primary btn-sm" disabled>−</button>
-                                        <input type="text" class="form-control form-control-sm text-center bg-dark text-white border-primary" value="1" readonly>
-                                        <button type="button" class="btn btn-outline-primary btn-sm" disabled>+</button>
-                                    </div>
-                                </td>
-                                <td class="text-end">$39.990</td>
-                                <td class="text-center">
-                                    <button type="button" class="btn btn-outline-danger btn-sm" disabled>
-                                        <i class="bi bi-trash"></i>
-                                    </button>
-                                </td>
-                            </tr>
+                        <tbody id="tbody-carrito">
                         </tbody>
                     </table>
                 </div>
@@ -142,10 +88,10 @@
 
                         <div class="mb-3">
                             <label for="select-envio" class="form-label">Envío</label>
-                            <select id="select-envio" class="form-select bg-dark text-white border-primary" disabled>
-                                <option selected>Retiro en tienda — $0</option>
-                                <option>Envío estándar — $3.990</option>
-                                <option>Envío express — $5.990</option>
+                            <select id="select-envio" class="form-select bg-dark text-white border-primary">
+                                <option value="0" selected>Retiro en tienda — $0</option>
+                                <option value="3990">Envío estándar — $3.990</option>
+                                <option value="5990">Envío express — $5.990</option>
                             </select>
                         </div>
 
@@ -158,20 +104,20 @@
                         </div>
 
                         <ul class="list-unstyled small">
-                            <li class="d-flex justify-content-between"><span>Subtotal</span><span>$59.980</span></li>
-                            <li class="d-flex justify-content-between"><span>Descuento</span><span>$0</span></li>
-                            <li class="d-flex justify-content-between"><span>Envío</span><span>$0</span></li>
-                            <li class="d-flex justify-content-between"><span>IVA (19%)</span><span>$11.396</span></li>
+                            <li class="d-flex justify-content-between"><span>Subtotal</span><span id="subtotal">$0</span></li>
+                            <li class="d-flex justify-content-between"><span>Descuento</span><span id="descuento">$0</span></li>
+                            <li class="d-flex justify-content-between"><span>Envío</span><span id="envio">$0</span></li>
+                            <li class="d-flex justify-content-between"><span>IVA (19%)</span><span id="iva">$0</span></li>
                         </ul>
                         <hr />
                         <div class="d-flex justify-content-between align-items-center mb-3">
                             <strong>Total</strong>
-                            <strong>$71.376</strong>
+                            <strong id="total">$0</strong>
                         </div>
 
                         <div class="d-grid gap-2">
                             <a href="productos.html" class="btn btn-outline-primary">Seguir comprando</a>
-                            <button type="button" class="btn btn-outline-danger" disabled>Vaciar carrito</button>
+                            <button type="button" class="btn btn-outline-danger" id="btn-vaciar-carrito">Vaciar carrito</button>
                             <a href="#" class="btn btn-primary">Ir a pagar</a>
                         </div>
                     </div>
@@ -179,29 +125,27 @@
             </aside>
         </section>
 
-        <!-- Recomendados (opcional) -->
-        <section class="mt-5">
-            <h3 class="text-white mb-3">También te puede interesar</h3>
-            <div class="row">
-                <div class="col-12 col-sm-6 col-lg-3 mb-4">
-                    <div class="card tarjeta-producto h-100 bg-dark text-white border-primary">
-                        <div class="placeholder-wide" aria-hidden="true"></div>
-                        <div class="card-body">
-                            <h6 class="card-title mb-2">Producto demo 1</h6>
-                            <p class="card-text text-secondary">Descripción breve.</p>
-                            <div class="d-flex justify-content-between align-items-center">
-                                <span class="precio-producto fw-bold">$XX.XXX</span>
-                                <a href="#" class="btn btn-outline-primary">Ver detalle</a>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <!-- Repetir 2–3 tarjetas similares -->
-            </div>
-        </section>
+                                <section class="mt-5">
+                                    <h3 class="text-white mb-3">También te puede interesar</h3>
+                                    <div class="row">
+                                        <div class="col-12 col-sm-6 col-lg-3 mb-4">
+                                            <div class="card tarjeta-producto h-100 bg-dark text-white border-primary">
+                                                <img src="assets/img/mouse-gamer.jpg" alt="Mouse Gamer RGB" class="card-img-top">
+                                                <div class="card-body">
+                                                    <h6 class="card-title mb-2">Mouse Gamer RGB</h6>
+                                                    <p class="card-text text-secondary">Ergonomía y precisión para tus juegos.</p>
+                                                    <div class="d-flex justify-content-between align-items-center">
+                                                        <span class="precio-producto fw-bold">$19.990</span>
+                                                        <a href="detalle-producto.html?id=1" class="btn btn-outline-primary">Ver detalle</a>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </section>
     </main>
 
-    <!-- Footer (copiar igual al index) -->
+    <!-- Footer  -->
     <footer class="bg-dark text-light py-4 mt-5">
         <div class="container">
             <div class="row">
