@@ -1,3 +1,5 @@
+// === Funciones principales y validaciones para TechNova Store ===
+
 // === Accesibilidad: Cambio de tema ===
 function aplicarTema(tema) {
     document.body.classList.remove('tema-default', 'tema-claro', 'tema-oscuro');
@@ -14,6 +16,7 @@ function alternarTema() {
     aplicarTema(siguiente);
 }
 
+// Eventos al cargar el DOM (registro + tema guardado)
 document.addEventListener('DOMContentLoaded', function() {
     // Registro: mostrar mensaje al registrarse
     if (document.getElementById('formulario-registro')) {
@@ -40,8 +43,8 @@ document.addEventListener('DOMContentLoaded', function() {
         btnTema.addEventListener('click', alternarTema);
     }
 });
+
 // Funciones globales para TechNova Store
-// Comentarios en español y código organizado
 
 // Actualiza el contador del carrito desde localStorage
 function actualizarContadorCarrito() {
@@ -51,7 +54,7 @@ function actualizarContadorCarrito() {
     contador.textContent = carrito.length;
 }
 
-// Agrega producto al carrito (simulado)
+// Evento global para agregar producto al carrito
 document.addEventListener('click', function(e) {
     if (e.target.classList.contains('boton-agregar-carrito')) {
         const id = e.target.getAttribute('data-id');
@@ -74,11 +77,9 @@ function mostrarToast(mensaje) {
     }, 2000);
 }
 
-// Validación de formularios
 // ================= VALIDACIONES Y FUNCIONES DINÁMICAS =================
 
 // ================= REGIONES Y COMUNAS DE CHILE =================
-// Arreglo de regiones y comunas (solo ejemplo, puedes ampliar)
 const regionesComunas = {
     'Región Metropolitana': ['Santiago', 'Puente Alto', 'Maipú', 'La Florida'],
     'Valparaíso': ['Valparaíso', 'Viña del Mar', 'Quilpué', 'Villa Alemana'],
@@ -87,7 +88,7 @@ const regionesComunas = {
     'Araucanía': ['Temuco', 'Padre Las Casas', 'Angol']
 };
 
-// ================== RENDERIZAR SELECTS DE REGIÓN Y COMUNA ==================
+// Cargar regiones en un <select>
 function cargarRegiones(selectRegionId) {
     const select = document.getElementById(selectRegionId);
     if (!select) return;
@@ -100,6 +101,7 @@ function cargarRegiones(selectRegionId) {
     });
 }
 
+// Cargar comunas según región
 function cargarComunas(region, selectComunaId) {
     const select = document.getElementById(selectComunaId);
     if (!select) return;
@@ -114,9 +116,8 @@ function cargarComunas(region, selectComunaId) {
     }
 }
 
-// ================== VALIDACIÓN RUN CHILENO ==================
+// ================= VALIDACIÓN RUN CHILENO =================
 function validarRunChileno(run) {
-    // Elimina espacios, puntos y guion
     run = run.replace(/[^0-9kK]/g, '').toUpperCase();
     if (run.length < 7 || run.length > 9) return false;
     let cuerpo = run.slice(0, -1);
@@ -131,7 +132,7 @@ function validarRunChileno(run) {
     return dv === dvEsperado;
 }
 
-// ================== VALIDACIONES EN TIEMPO REAL ==================
+// ================= VALIDACIONES EN TIEMPO REAL =================
 document.addEventListener('DOMContentLoaded', function() {
     // Registro.html
     if (document.getElementById('formulario-registro')) {
@@ -188,53 +189,18 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 });
 
-// ================== VALIDACIÓN DE FORMULARIOS BOOTSTRAP ==================
+// ================= VALIDACIÓN DE FORMULARIOS BOOTSTRAP =================
 (function() {
-// ================== ARREGLO DE PRODUCTOS (SIMULADO) ==================
+
+// ================= ARREGLO DE PRODUCTOS (SIMULADO) =================
 const productos = [
-    {
-        id: 1,
-        nombre: 'Mouse Gamer RGB',
-        descripcion: 'Ergonomía y precisión para tus juegos.',
-        precio: 19990,
-        descuento: 20,
-        imagen: 'assets/img/mouse-gamer.jpg',
-        categoria: 'Accesorios',
-        stock: 10
-    },
-    {
-        id: 2,
-        nombre: 'Teclado Mecánico',
-        descripcion: 'Switches azules, retroiluminado.',
-        precio: 29990,
-        descuento: 10,
-        imagen: 'assets/img/teclado-gamer.jpg',
-        categoria: 'Accesorios',
-        stock: 5
-    },
-    {
-        id: 3,
-        nombre: 'SSD NVMe 1TB',
-        descripcion: 'Velocidad y capacidad para tu PC.',
-        precio: 74990,
-        descuento: 0,
-        imagen: 'assets/img/nvme.jpg',
-        categoria: 'Computación',
-        stock: 8
-    },
-    {
-        id: 4,
-        nombre: 'Kit Periféricos',
-        descripcion: 'Combo mouse, teclado y audífonos.',
-        precio: 39990,
-        descuento: 15,
-        imagen: 'assets/img/periferico.webp',
-        categoria: 'Accesorios',
-        stock: 12
-    }
+    { id: 1, nombre: 'Mouse Gamer RGB', descripcion: 'Ergonomía y precisión para tus juegos.', precio: 19990, descuento: 20, imagen: 'assets/img/mouse-gamer.jpg', categoria: 'Accesorios', stock: 10 },
+    { id: 2, nombre: 'Teclado Mecánico', descripcion: 'Switches azules, retroiluminado.', precio: 29990, descuento: 10, imagen: 'assets/img/teclado-gamer.jpg', categoria: 'Accesorios', stock: 5 },
+    { id: 3, nombre: 'SSD NVMe 1TB', descripcion: 'Velocidad y capacidad para tu PC.', precio: 74990, descuento: 0, imagen: 'assets/img/nvme.jpg', categoria: 'Computación', stock: 8 },
+    { id: 4, nombre: 'Kit Periféricos', descripcion: 'Combo mouse, teclado y audífonos.', precio: 39990, descuento: 15, imagen: 'assets/img/periferico.webp', categoria: 'Accesorios', stock: 12 }
 ];
 
-// ================== RENDERIZAR PRODUCTOS EN productos.html ==================
+// Renderizar productos en productos.html
 function renderizarProductos() {
     const contenedor = document.getElementById('contenedor-productos');
     if (!contenedor) return;
@@ -259,11 +225,10 @@ function renderizarProductos() {
     });
 }
 
-// ================== RENDERIZAR DETALLE DE PRODUCTO ==================
+// Renderizar detalle de producto
 function renderizarDetalleProducto() {
     const contenedor = document.getElementById('contenedor-detalle-producto');
     if (!contenedor) return;
-    // Obtener id de producto de la URL (ejemplo: ?id=1)
     const params = new URLSearchParams(window.location.search);
     const id = parseInt(params.get('id'));
     const producto = productos.find(p => p.id === id);
@@ -293,16 +258,15 @@ function renderizarDetalleProducto() {
     `;
 }
 
-// ================== CARRITO DE COMPRAS ==================
+// ================= CARRITO DE COMPRAS =================
 function obtenerCarrito() {
     return JSON.parse(localStorage.getItem('carrito')) || [];
 }
-
 function guardarCarrito(carrito) {
     localStorage.setItem('carrito', JSON.stringify(carrito));
 }
 
-// Agregar producto al carrito
+// Evento para agregar producto al carrito
 document.addEventListener('click', function(e) {
     if (e.target.classList.contains('boton-agregar-carrito')) {
         const id = parseInt(e.target.getAttribute('data-id'));
@@ -314,19 +278,18 @@ document.addEventListener('click', function(e) {
     }
 });
 
-// Actualizar contador de carrito al cargar
+// Al cargar la página, renderiza productos y actualiza carrito
 document.addEventListener('DOMContentLoaded', function() {
     actualizarContadorCarrito();
     renderizarProductos();
     renderizarDetalleProducto();
 });
 
-// ================== SIMULACIÓN DE COMPRA ==================
-// Puedes agregar aquí la lógica para simular la compra, vaciar el carrito, etc.
+// ================= SIMULACIÓN DE COMPRA =================
+// (Aquí iría la lógica para simular la compra, vaciar el carrito, etc.)
 
-// ================== CONTACTO: VALIDACIÓN Y ENVÍO ==================
+// ================= CONTACTO: VALIDACIÓN Y ENVÍO =================
 document.addEventListener('DOMContentLoaded', function() {
-    // Lógica de verificación de seguridad
     if (document.getElementById('formulario-contacto')) {
         let verificado = false;
         const iconos = document.querySelectorAll('.icono-verificacion');
@@ -343,7 +306,7 @@ document.addEventListener('DOMContentLoaded', function() {
             });
         });
 
-        // Validación y envío del formulario
+        // Validación y envío del formulario de contacto
         document.getElementById('formulario-contacto').addEventListener('submit', function(e) {
             e.preventDefault();
             const form = this;
@@ -354,7 +317,6 @@ document.addEventListener('DOMContentLoaded', function() {
                 }
                 return;
             }
-            // Mostrar mensaje de éxito
             const mensaje = document.getElementById('mensaje-contacto');
             mensaje.textContent = '¡Tu información ha sido enviada! Te contactaremos pronto.';
             mensaje.classList.remove('d-none', 'text-danger');
@@ -366,23 +328,25 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 });
-    'use strict';
-    const forms = document.querySelectorAll('form');
-    Array.from(forms).forEach(function(form) {
-        form.addEventListener('submit', function(event) {
-            if (!form.checkValidity()) {
-                event.preventDefault();
-                event.stopPropagation();
-            }
-            form.classList.add('was-validated');
-        }, false);
-    });
+
+// Validación general con Bootstrap
+'use strict';
+const forms = document.querySelectorAll('form');
+Array.from(forms).forEach(function(form) {
+    form.addEventListener('submit', function(event) {
+        if (!form.checkValidity()) {
+            event.preventDefault();
+            event.stopPropagation();
+        }
+        form.classList.add('was-validated');
+    }, false);
+});
 })();
 
 // Actualizar contador al cargar la página
 document.addEventListener('DOMContentLoaded', actualizarContadorCarrito);
 
-// Simulación de redirección en enlaces (ejemplo)
+// Simulación de redirección en enlaces
 document.querySelectorAll('a').forEach(function(enlace) {
     enlace.addEventListener('click', function(e) {
         const href = enlace.getAttribute('href');

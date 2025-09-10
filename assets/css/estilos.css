@@ -1,4 +1,6 @@
 /* === Temas de accesibilidad === */
+
+/* Estilos base para los tres temas (default, claro y oscuro) */
 body.tema-default {
     background: #181A1B;
     color: #f5f5f5;
@@ -12,9 +14,12 @@ body.tema-oscuro {
     color: #e0e0e0;
 }
 
+/* Transiciones suaves para que los cambios de color no sean bruscos */
 header, footer, .card, .menu-admin, .sidebar {
     transition: background 0.3s, color 0.3s;
 }
+
+/* Ajustes de colores en tema claro */
 body.tema-claro header,
 body.tema-claro footer,
 body.tema-claro .card,
@@ -23,6 +28,8 @@ body.tema-claro .sidebar {
     background: #e0e0e0 !important;
     color: #181A1B !important;
 }
+
+/* Ajustes de colores en tema oscuro */
 body.tema-oscuro header,
 body.tema-oscuro footer,
 body.tema-oscuro .card,
@@ -31,32 +38,33 @@ body.tema-oscuro .sidebar {
     background: #222 !important;
     color: #e0e0e0 !important;
 }
+
+/* Links, badges y botones según tema */
 body.tema-claro .nav-link { color: #181A1B !important; }
 body.tema-oscuro .nav-link { color: #e0e0e0 !important; }
 body.tema-claro .badge { color: #fff !important; }
 body.tema-oscuro .badge { color: #fff !important; }
 body.tema-claro .btn { color: #181A1B !important; }
 body.tema-oscuro .btn { color: #e0e0e0 !important; }
-/*
-    Hoja de estilos principal para TechNova Store
-    Inspirado en SP Digital - Colores tecnológicos, fondo oscuro y elementos brillantes
-    Comentarios en español y clases descriptivas
-*/
 
+/* Fuente principal para todo el sitio */
 body {
     font-family: 'Segoe UI', Arial, sans-serif;
 }
 
+/* Estilo del logo (bordes y brillo) */
 .logo {
     border-radius: 8px;
     box-shadow: 0 0 8px #0d6efd;
 }
 
+/* Nombre de la tienda (color azul y espaciado) */
 .nombre-tienda {
     color: #0d6efd;
     letter-spacing: 1px;
 }
 
+/* Menú de navegación y links */
 .menu-navegacion .nav-link {
     color: #f5f5f5;
     transition: color 0.2s;
@@ -65,10 +73,12 @@ body {
     color: #0d6efd;
 }
 
+/* Posicionamiento del carrito en el menú */
 .posicion-carrito {
     margin-left: 16px;
 }
 
+/* Sección principal (hero) con degradado y sombras */
 .hero-section {
     background: linear-gradient(90deg, #181A1B 60%, #0d6efd 100%);
     box-shadow: 0 4px 32px #0d6efd44;
@@ -77,11 +87,13 @@ body {
     box-shadow: 0 0 32px #0d6efd88;
 }
 
+/* Títulos de secciones de productos */
 .seccion-productos-destacados h2,
 .seccion-productos h2 {
     color: #0d6efd;
 }
 
+/* Tarjetas de productos (bordes, sombra y animación hover) */
 .tarjeta-producto {
     border: 2px solid #0d6efd;
     box-shadow: 0 2px 12px #0d6efd22;
@@ -92,9 +104,12 @@ body {
     box-shadow: 0 4px 24px #0d6efd44;
 }
 
+/* Precio del producto en azul */
 .precio-producto {
     color: #0d6efd;
 }
+
+/* Botón agregar al carrito */
 .boton-agregar-carrito {
     border-radius: 20px;
     font-weight: 600;
@@ -104,16 +119,19 @@ body {
     color: #fff;
 }
 
+/* Footer con línea azul y fondo oscuro */
 footer {
     border-top: 2px solid #0d6efd;
     background: #181A1B;
 }
 
+/* CSS para modificar el menú del admin */
 .menu-admin {
     min-height: 300px;
     border-right: 2px solid #0d6efd;
 }
 
+/* Formularios: inputs válidos y no válidos */
 .formulario-registro .form-control:invalid,
 .formulario-login .form-control:invalid,
 .formulario-contacto .form-control:invalid,
@@ -121,7 +139,6 @@ footer {
 .formulario-nuevo-usuario .form-control:invalid {
     border-color: #dc3545;
 }
-
 .formulario-registro .form-control:valid,
 .formulario-login .form-control:valid,
 .formulario-contacto .form-control:valid,
@@ -130,12 +147,9 @@ footer {
     border-color: #198754;
 }
 
+/* Botones secundarios (ver productos, blog, login, registro, contacto) */
 .boton-ver-productos,
-.boton-ver-blog {
-    border-radius: 20px;
-    font-weight: 600;
-}
-
+.boton-ver-blog,
 .boton-login,
 .boton-registro,
 .boton-contacto {
@@ -143,7 +157,7 @@ footer {
     font-weight: 600;
 }
 
-/* Responsive */
+/* Responsive para pantallas pequeñas */
 @media (max-width: 768px) {
     .menu-navegacion ul {
         flex-direction: column;
@@ -153,14 +167,13 @@ footer {
     }
 }
 
+/* Ajustes de imágenes específicas */
 #mouse-gamer {
     width: auto;
-
     height: auto;
 }
 
 #img-ssd {
     width: auto;
-
     height: 500px;
 }
