@@ -54,18 +54,6 @@ function actualizarContadorCarrito() {
     contador.textContent = carrito.length;
 }
 
-// Evento global para agregar producto al carrito
-document.addEventListener('click', function(e) {
-    if (e.target.classList.contains('boton-agregar-carrito')) {
-        const id = e.target.getAttribute('data-id');
-        let carrito = JSON.parse(localStorage.getItem('carrito')) || [];
-        carrito.push(id);
-        localStorage.setItem('carrito', JSON.stringify(carrito));
-        actualizarContadorCarrito();
-        mostrarToast('Producto agregado al carrito');
-    }
-});
-
 // Muestra un mensaje temporal (toast)
 function mostrarToast(mensaje) {
     const toast = document.createElement('div');
@@ -76,6 +64,8 @@ function mostrarToast(mensaje) {
         toast.remove();
     }, 2000);
 }
+
+
 
 // ================= VALIDACIONES Y FUNCIONES DINÁMICAS =================
 
@@ -265,6 +255,104 @@ function obtenerCarrito() {
 function guardarCarrito(carrito) {
     localStorage.setItem('carrito', JSON.stringify(carrito));
 }
+
+// Renderiza los productos del carrito en carrito.html
+function renderizarCarrito() {
+    const tbody = document.getElementById('tbody-carrito');
+    const seccionVacio = document.getElementById('carrito-vacio');
+    const seccionItems = document.getElementById('carrito-con-items');
+    const carrito = obtenerCarrito();
+    if (!tbody || !seccionVacio || !seccionItems) return;
+    if (carrito.length === 0) {
+        seccionVacio.classList.remove('d-none');
+        seccionItems.classList.add('d-none');
+        return;
+    } else {
+        seccionVacio.classList.add('d-none');
+        seccionItems.classList.remove('d-none');
+    }
+    // Contar cantidades por id
+    const cantidades = {};
+    carrito.forEach(id => {
+        cantidades[id] = (cantidades[id] || 0) + 1;
+    });
+    let filas = '';
+    let subtotal = 0;
+    Object.entries(cantidades).forEach(([id, cantidad]) => {
+        const producto = productos.find(p => p.id === parseInt(id));
+        if (!producto) return;
+        const precioFinal = producto.descuento > 0 ? Math.round(producto.precio * (1 - producto.descuento / 100)) : producto.precio;
+        const sub = precioFinal * cantidad;
+        subtotal += sub;
+        filas += `
+            <tr>
+                <td>
+                    <div class="d-flex align-items-center gap-2">
+                        <img src="${producto.imagen}" alt="${producto.nombre}" width="48" height="48" class="rounded me-2">
+                        <div>
+                            <div class="fw-bold">${producto.nombre}</div>
+                            <div class="small text-secondary">${producto.descripcion}</div>
+                        </div>
+                    </div>
+                </td>
+                <td class="text-center">$${precioFinal.toLocaleString('es-CL')}</td>
+                <td class="text-center">${cantidad}</td>
+                <td class="text-end">$${sub.toLocaleString('es-CL')}</td>
+                <td class="text-center">
+                    <button class="btn btn-sm btn-outline-danger btn-quitar-item" data-id="${producto.id}"><i class="bi bi-trash"></i></button>
+                </td>
+            </tr>
+        `;
+    });
+    tbody.innerHTML = filas;
+    // Actualizar resumen
+    const subtotalElem = document.getElementById('subtotal');
+    const descuentoElem = document.getElementById('descuento');
+    const envioElem = document.getElementById('envio');
+    const ivaElem = document.getElementById('iva');
+    const totalElem = document.getElementById('total');
+    const selectEnvio = document.getElementById('select-envio');
+    let envio = selectEnvio ? parseInt(selectEnvio.value) : 0;
+    let descuento = 0; // Aquí podrías aplicar lógica de cupones
+    let iva = Math.round((subtotal - descuento) * 0.19);
+    let total = subtotal - descuento + envio + iva;
+    if (subtotalElem) subtotalElem.textContent = `$${subtotal.toLocaleString('es-CL')}`;
+    if (descuentoElem) descuentoElem.textContent = `$${descuento.toLocaleString('es-CL')}`;
+    if (envioElem) envioElem.textContent = `$${envio.toLocaleString('es-CL')}`;
+    if (ivaElem) ivaElem.textContent = `$${iva.toLocaleString('es-CL')}`;
+    if (totalElem) totalElem.textContent = `$${total.toLocaleString('es-CL')}`;
+}
+
+// Evento para quitar un producto del carrito
+document.addEventListener('click', function(e) {
+    if (e.target.classList.contains('btn-quitar-item')) {
+        const id = parseInt(e.target.getAttribute('data-id'));
+        let carrito = obtenerCarrito();
+        // Quita solo una unidad de ese producto
+        const idx = carrito.indexOf(id);
+        if (idx !== -1) {
+            carrito.splice(idx, 1);
+            guardarCarrito(carrito);
+            renderizarCarrito();
+            actualizarContadorCarrito();
+        }
+    }
+});
+
+// Evento para actualizar el resumen al cambiar el envío
+document.addEventListener('DOMContentLoaded', function() {
+    const selectEnvio = document.getElementById('select-envio');
+    if (selectEnvio) {
+        selectEnvio.addEventListener('change', renderizarCarrito);
+    }
+});
+
+// Renderizar carrito al cargar carrito.html
+document.addEventListener('DOMContentLoaded', function() {
+    if (document.getElementById('tbody-carrito')) {
+        renderizarCarrito();
+    }
+});
 
 // Evento para agregar producto al carrito
 document.addEventListener('click', function(e) {
