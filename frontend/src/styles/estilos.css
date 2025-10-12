@@ -175,3 +175,57 @@ footer .fs-5:hover {
 .text-primary {
   color: #0d6efd !important;
 }
+/* === COLOR NARANJA ELÉCTRICO === */
+.btn-naranja {
+  background-color: #ff6600 !important;
+  border: none;
+  color: #fff !important;
+  font-weight: 600;
+  border-radius: 20px;
+  transition: transform 0.2s, box-shadow 0.3s;
+}
+
+.btn-naranja:hover {
+  background-color: #ff7b00 !important;
+  box-shadow: 0 0 12px #ff6600aa;
+  transform: scale(1.05);
+}
+
+/* Para el texto del Hero */
+.nombre-tienda-naranja {
+  color: #ff6600 !important;
+  text-shadow: 0 0 8px #ff6600aa, 0 0 12px #ff660088;
+  transition: text-shadow 0.3s ease, transform 0.3s ease;
+}
+
+.nombre-tienda-naranja:hover {
+  text-shadow: 0 0 12px #ff6600cc, 0 0 20px #ff6600aa;
+  transform: scale(1.05);
+}
+
+body {
+  background-color: #0b0c10 !important;
+}
+
+/* Asegura que Hero y Productos compartan el mismo fondo */
+.hero-section,
+.seccion-productos-destacados {
+  background-color: #0b0c10 !important;
+}
+
+/* Quita márgenes entre secciones */
+.hero-section {
+  margin-bottom: 0 !important;
+  padding-bottom: 3rem; /* deja un poco de espacio visual */
+}
+
+.seccion-productos-destacados {
+  margin-top: 0 !important;
+  padding-top: 3rem;
+}
+
+/* Asegura que no haya bordes blancos alrededor de los contenedores */
+.container,
+.row {
+  background: transparent !important;
+}
