@@ -1,4 +1,5 @@
-function Header() {
+import { Link } from "react-router-dom";
+export const Header = () => {
   return (
     <header className="bg-dark text-white py-3 shadow-sm border-bottom border-primary">
       <div className="container d-flex justify-content-between align-items-center flex-wrap">
@@ -15,12 +16,12 @@ function Header() {
 
         <nav className="menu-navegacion mb-2 mb-md-0">
           <ul className="nav">
-            <li className="nav-item"><a className="nav-link text-white" href="#">Inicio</a></li>
-            <li className="nav-item"><a className="nav-link text-white" href="#">Productos</a></li>
-            <li className="nav-item"><a className="nav-link text-white" href="#">Blogs</a></li>
-            <li className="nav-item"><a className="nav-link text-white" href="#">Nosotros</a></li>
-            <li className="nav-item"><a className="nav-link text-white" href="#">Contacto</a></li>
-            <li className="nav-item"><a className="nav-link text-white" href="#">Login</a></li>
+            <li className="nav-item"><Link to="/" className="nav-link text-white">Inicio</Link></li>
+            <li className="nav-item"><Link to="/productos" className="nav-link text-white">Productos</Link></li>
+            <li className="nav-item"><Link to="/blogs" className="nav-link text-white">Blogs</Link></li>
+            <li className="nav-item"><Link to="/nosotros" className="nav-link text-white">Nosotros</Link></li>
+            <li className="nav-item"><Link to="/contacto" className="nav-link text-white">Contacto</Link></li>
+            <li className="nav-item"><Link to="/login" className="nav-link text-white">Login</Link></li>
           </ul>
         </nav>
 

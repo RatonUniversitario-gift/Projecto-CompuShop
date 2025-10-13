@@ -1,4 +1,4 @@
-function Hero() {
+export const Hero = () => {
   return (
     <section className="hero-section py-5">
       <div className="container text-center">

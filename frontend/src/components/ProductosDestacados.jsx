@@ -1,4 +1,4 @@
-function ProductosDestacados() {
+export const ProductosDestacados = () => {
   return (
     <main className="container seccion-productos-destacados py-5">
       <h2 className="text-center text-white mb-5">Productos Destacados</h2>
