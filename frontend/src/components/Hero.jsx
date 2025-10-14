@@ -5,7 +5,7 @@ function Hero() {
         <div className="row align-items-center">
           <div className="col-md-6 mb-4 mb-md-0 text-md-start text-center">
             <h1 className="display-5 fw-bold text-white mb-3">
-              Bienvenido a <span className="nombre-tienda-naranja">TechNova Store</span>
+              Bienvenido a <span className= "nombre-tienda-azul"> TechNova </span> <span className="nombre-tienda-naranja">Store</span>
             </h1>
             <p className="lead text-light mb-4">
               Tu tienda online de tecnología con los mejores productos y ofertas exclusivas.

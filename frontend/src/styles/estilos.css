@@ -88,9 +88,15 @@ header {
 .tarjeta-producto .card-text {
   color: #b0b3b8;
 }
+
 .precio-producto, .fw-bold.text-primary {
-  color: #0d6efd !important;
+  color: #00B4D8 !important;
+  border: none;
+  font-weight: 600;
+  border-radius: 20px;
+  transition: transform 0.2s, box-shadow 0.3s;
 }
+
 
 /* Botones */
 .boton-agregar-carrito,
@@ -192,6 +198,11 @@ footer .fs-5:hover {
 }
 
 /* Para el texto del Hero */
+.nombre-tienda-azul {
+  color: #00B4D8 !important;
+  text-shadow: 0 0 8px #0d5edfaa, 0 0 12px #2c76d788;
+  transition: text-shadow 0.3s ease, transform 0.3s ease;
+}
 .nombre-tienda-naranja {
   color: #ff6600 !important;
   text-shadow: 0 0 8px #ff6600aa, 0 0 12px #ff660088;
@@ -204,7 +215,7 @@ footer .fs-5:hover {
 }
 
 body {
-  background-color: #0b0c10 !important;
+  background-color: #213E60 !important;
 }
 
 /* Asegura que Hero y Productos compartan el mismo fondo */
