@@ -1,6 +1,6 @@
 function Footer() {
   return (
-    <footer className="bg-dark text-light py-5 mt-5 border-top border-primary">
+    <footer className="bg-dark text-light py-5  border-top border-primary">
       <div className="container">
         <div className="row gy-4">
           <div className="col-12 col-md-3">

@@ -9,7 +9,10 @@ function Header() {
             className="logo me-2"
             height="48"
           />
-          <span className="fs-3 fw-bold nombre-tienda-naranja">TechNova Store</span>
+          <span className="fs-3 fw-bold">
+            <span className="nombre-tienda-azul">TechNova</span>{' '}
+            <span className="nombre-tienda-naranja">Store</span>
+          </span>
 
         </a>
 

@@ -36,8 +36,8 @@ header {
 
 /* ================== HERO ================== */
 .hero-section {
-  background: radial-gradient(circle at 20% 30%, #1a1d24 0%, #0b0c10 70%);
-  box-shadow: inset 0 -10px 40px rgba(13,110,253,0.15);
+  background: radial-gradient(circle at 30% 30%, #213E60 0%, #0b0c10 70%);
+  box-shadow: inset 0 -10px 40px rgba(0, 180, 216, 0.3);
   color: #fff;
 }
 .hero-section h1 {
@@ -89,14 +89,14 @@ header {
   color: #b0b3b8;
 }
 
-.precio-producto, .fw-bold.text-primary {
+.precio-producto,
+.fw-bold.text-primary {
   color: #00B4D8 !important;
   border: none;
   font-weight: 600;
   border-radius: 20px;
   transition: transform 0.2s, box-shadow 0.3s;
 }
-
 
 /* Botones */
 .boton-agregar-carrito,
@@ -110,6 +110,22 @@ header {
   background: #0d6efd;
   color: #fff;
   box-shadow: 0 0 10px #3a8ef6;
+}
+
+/* === COLOR NARANJA ELÉCTRICO === */
+.btn-naranja {
+  background-color: #ff6a00 !important;
+  border: none;
+  color: #fff !important;
+  font-weight: 600;
+  border-radius: 20px;
+  box-shadow: 0 0 8px rgba(255, 102, 0, 0.3);
+  transition: transform 0.2s, box-shadow 0.3s;
+}
+.btn-naranja:hover {
+  background-color: #ff7b00 !important;
+  box-shadow: 0 0 16px rgba(255, 102, 0, 0.6);
+  transform: scale(1.05);
 }
 
 /* Badge (descuentos / stock) */
@@ -126,7 +142,8 @@ footer {
   background: #101218;
   box-shadow: 0 -4px 30px rgba(13,110,253,0.1);
 }
-footer h5, footer h6 {
+footer h5,
+footer h6 {
   color: #0d6efd;
   font-weight: 600;
 }
@@ -153,6 +170,66 @@ footer .fs-5:hover {
   color: #3a8ef6;
 }
 
+/* ================== HERO COLORS ================== */
+.nombre-tienda-azul {
+  color: #00B4D8 !important;
+  text-shadow: 0 0 8px #0d5edfaa, 0 0 12px #2c76d788;
+  transition: text-shadow 0.3s ease, transform 0.3s ease;
+}
+.nombre-tienda-azul:hover {
+  text-shadow: 0 0 12px #0d5edfaa, 0 0 20px #0d5edfaa;
+  transform: scale(1.05);
+}
+.nombre-tienda-naranja {
+  color: #ff6600 !important;
+  text-shadow: 0 0 8px #ff6600aa, 0 0 12px #ff660088;
+  transition: text-shadow 0.3s ease, transform 0.3s ease;
+}
+.nombre-tienda-naranja:hover {
+  text-shadow: 0 0 12px #ff6600cc, 0 0 20px #ff6600aa;
+  transform: scale(1.05);
+}
+
+/* ================== SECCIONES ================== */
+
+/* Hero principal */
+.hero-section {
+  margin-bottom: 0 !important;
+  padding-bottom: 3rem;
+  background: radial-gradient(circle at 30% 30%, #213E60 0%, #0b0c10 70%);
+  box-shadow: inset 0 -10px 40px rgba(0, 180, 216, 0.3);
+}
+
+/* Fondo degradado eléctrico para Productos Destacados */
+.seccion-productos-destacados {
+  margin-top: 0 !important;
+  padding-top: 3rem;
+  background: linear-gradient(180deg, #0b0c10 0%, #162447 100%) !important;
+  border-top: 1px solid rgba(0,180,216,0.3);
+}
+
+/* Borde suave en cards para integrarlas con el degradado */
+.tarjeta-producto {
+  background: #1a1d24;
+  border: 1px solid rgba(58,142,246,0.4);
+}
+
+/* ================== GENERALES ================== */
+.container,
+.row {
+  background: transparent !important;
+}
+.hover-scale {
+  transition: transform 0.2s, box-shadow 0.3s;
+}
+.hover-scale:hover {
+  transform: scale(1.03);
+  box-shadow: 0 4px 20px rgba(13,110,253,0.4);
+}
+.text-primary {
+  color: #0d6efd !important;
+}
+
 /* ================== RESPONSIVE ================== */
 @media (max-width: 768px) {
   .menu-navegacion ul {
@@ -168,75 +245,4 @@ footer .fs-5:hover {
   footer .d-flex {
     justify-content: center;
   }
-}
-
-/* ================== EFECTOS GENERALES ================== */
-.hover-scale {
-  transition: transform 0.2s, box-shadow 0.3s;
-}
-.hover-scale:hover {
-  transform: scale(1.03);
-  box-shadow: 0 4px 20px rgba(13,110,253,0.4);
-}
-.text-primary {
-  color: #0d6efd !important;
-}
-/* === COLOR NARANJA ELÉCTRICO === */
-.btn-naranja {
-  background-color: #ff6600 !important;
-  border: none;
-  color: #fff !important;
-  font-weight: 600;
-  border-radius: 20px;
-  transition: transform 0.2s, box-shadow 0.3s;
-}
-
-.btn-naranja:hover {
-  background-color: #ff7b00 !important;
-  box-shadow: 0 0 12px #ff6600aa;
-  transform: scale(1.05);
-}
-
-/* Para el texto del Hero */
-.nombre-tienda-azul {
-  color: #00B4D8 !important;
-  text-shadow: 0 0 8px #0d5edfaa, 0 0 12px #2c76d788;
-  transition: text-shadow 0.3s ease, transform 0.3s ease;
-}
-.nombre-tienda-naranja {
-  color: #ff6600 !important;
-  text-shadow: 0 0 8px #ff6600aa, 0 0 12px #ff660088;
-  transition: text-shadow 0.3s ease, transform 0.3s ease;
-}
-
-.nombre-tienda-naranja:hover {
-  text-shadow: 0 0 12px #ff6600cc, 0 0 20px #ff6600aa;
-  transform: scale(1.05);
-}
-
-body {
-  background-color: #213E60 !important;
-}
-
-/* Asegura que Hero y Productos compartan el mismo fondo */
-.hero-section,
-.seccion-productos-destacados {
-  background-color: #0b0c10 !important;
-}
-
-/* Quita márgenes entre secciones */
-.hero-section {
-  margin-bottom: 0 !important;
-  padding-bottom: 3rem; /* deja un poco de espacio visual */
-}
-
-.seccion-productos-destacados {
-  margin-top: 0 !important;
-  padding-top: 3rem;
-}
-
-/* Asegura que no haya bordes blancos alrededor de los contenedores */
-.container,
-.row {
-  background: transparent !important;
 }
