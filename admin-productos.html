@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Administrar productos - TechNova Store">
+    <title>Admin Productos | TechNova Store</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="assets/css/estilos.css">
+    <link rel="icon" type="image/png" href="assets/img/1757355736.png">
+</head>
+<body class="fondo-oscuro">
+    <!-- Header -->
+    <header class="bg-dark text-white py-3">
+        <div class="container d-flex justify-content-between align-items-center">
+            <a href="index.html" class="d-flex align-items-center text-decoration-none">
+                <img src="assets/img/1757355736.png" alt="Logo TechNova Store" class="logo me-2" height="48">
+                <span class="fs-3 fw-bold nombre-tienda">TechNova Store</span>
+            </a>
+            <!-- Botón de accesibilidad para cambiar tema -->
+            <button id="btn-tema" class="btn btn-outline-primary ms-3" aria-label="Cambiar tema" title="Cambiar tema">
+                <i class="bi bi-circle-half"></i> Tema
+            </button>
+        </div>
+    </header>
+    <!-- Panel de administración de productos -->
+    <main class="container-fluid py-5">
+        <div class="row">
+            <!-- Menú lateral -->
+            <nav class="col-md-3 col-lg-2 d-md-block bg-dark sidebar p-3 menu-admin">
+                <div class="position-sticky">
+                    <ul class="nav flex-column">
+                        <li class="nav-item mb-2"><a class="nav-link text-white" href="admin-home.html">Inicio Admin</a></li>
+                        <li class="nav-item mb-2"><a class="nav-link text-white" href="admin-productos.html">Productos</a></li>
+                        <li class="nav-item mb-2"><a class="nav-link text-white" href="admin-usuarios.html">Usuarios</a></li>
+                        <li class="nav-item mb-2"><a class="nav-link text-white" href="index.html">Volver a la tienda</a></li>
+                    </ul>
+                </div>
+            </nav>
+            <!-- Contenido principal -->
+            <section class="col-md-9 col-lg-10 ms-sm-auto px-4">
+                <h2 class="text-white mb-4">Gestión de Productos</h2>
+                <!-- Formulario para agregar producto -->
+                <div class="card bg-dark text-white border-primary mb-4">
+                    <div class="card-body">
+                        <h4 class="mb-3">Agregar Producto</h4>
+                        <form id="formulario-producto-admin" class="formulario-producto-admin" novalidate>
+                            <!-- Código producto -->
+                            <div class="mb-3">
+                                <label for="codigo-producto" class="form-label">Código de Producto</label>
+                                <input type="text" class="form-control" id="codigo-producto" name="codigo-producto" minlength="3" required>
+                                <div class="invalid-feedback">El código es obligatorio y mínimo 3 caracteres.</div>
+                            </div>
+                            <!-- Nombre -->
+                            <div class="mb-3">
+                                <label for="nombre-producto" class="form-label">Nombre</label>
+                                <input type="text" class="form-control" id="nombre-producto" name="nombre-producto" maxlength="100" required>
+                                <div class="invalid-feedback">El nombre es obligatorio y máximo 100 caracteres.</div>
+                            </div>
+                            <!-- Descripción -->
+                            <div class="mb-3">
+                                <label for="descripcion-producto" class="form-label">Descripción</label>
+                                <textarea class="form-control" id="descripcion-producto" name="descripcion-producto" maxlength="500" rows="2"></textarea>
+                                <div class="invalid-feedback">Máximo 500 caracteres.</div>
+                            </div>
+                            <!-- Precio -->
+                            <div class="mb-3">
+                                <label for="precio-producto" class="form-label">Precio</label>
+                                <input type="number" class="form-control" id="precio-producto" name="precio-producto" min="0" step="0.01" required>
+                                <div class="invalid-feedback">El precio es obligatorio y debe ser mayor o igual a 0.</div>
+                            </div>
+                            <!-- Stock y Stock Crítico -->
+                            <div class="mb-3 row">
+                                <div class="col-md-6 mb-2 mb-md-0">
+                                    <label for="stock-producto" class="form-label">Stock</label>
+                                    <input type="number" class="form-control" id="stock-producto" name="stock-producto" min="0" step="1" required>
+                                    <div class="invalid-feedback">El stock es obligatorio y debe ser entero mayor o igual a 0.</div>
+                                </div>
+                                <div class="col-md-6">
+                                    <label for="stock-critico-producto" class="form-label">Stock Crítico (opcional)</label>
+                                    <input type="number" class="form-control" id="stock-critico-producto" name="stock-critico-producto" min="0" step="1">
+                                    <div class="invalid-feedback">El stock crítico debe ser entero mayor o igual a 0.</div>
+                                    <div class="alert alert-warning mt-2 d-none" id="alerta-stock-critico">¡El stock es igual o menor al stock crítico!</div>
+                                </div>
+                            </div>
+                            <!-- Categoría -->
+                            <div class="mb-3">
+                                <label for="categoria-producto" class="form-label">Categoría</label>
+                                <select class="form-select" id="categoria-producto" name="categoria-producto" required>
+                                    <option value="">Seleccione...</option>
+                                    <option value="Computación">Computación</option>
+                                    <option value="Celulares">Celulares</option>
+                                    <option value="Accesorios">Accesorios</option>
+                                </select>
+                                <div class="invalid-feedback">Seleccione una categoría.</div>
+                            </div>
+                            <!-- Imagen -->
+                            <div class="mb-3">
+                                <label for="imagen-producto" class="form-label">Imagen (archivo o URL)</label>
+                                <input type="file" class="form-control mb-2" id="imagen-producto" name="imagen-producto" accept="image/*">
+                                <input type="url" class="form-control" id="url-imagen-producto" name="url-imagen-producto" placeholder="O pega la URL de la imagen">
+                            </div>
+                            <button type="submit" class="btn btn-primary w-100">Agregar Producto</button>
+                        </form>
+                    </div>
+                </div>
+                <!-- Listado de productos ficticio -->
+                <div class="table-responsive mb-4">
+                    <table class="table table-dark table-bordered">
+                        <thead>
+                            <tr>
+                                <th>Imagen</th>
+                                <th>Nombre</th>
+                                <th>Precio</th>
+                                <th>Descuento</th>
+                                <th>Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><img src="assets/img/mouse-gamer.jpg" alt="Mouse Gamer RGB" height="40"></td>
+                                <td>Mouse Gamer RGB</td>
+                                <td>$19.990</td>
+                                <td>20%</td>
+                                <td><button class="btn btn-sm btn-warning">Editar</button> <button class="btn btn-sm btn-danger">Eliminar</button></td>
+                            </tr>
+                            <tr>
+                                <td><img src="assets/img/teclado-gamer.jpg" alt="Teclado Mecánico LED" height="40"></td>
+                                <td>Teclado Mecánico LED</td>
+                                <td>$39.990</td>
+                                <td>15%</td>
+                                <td><button class="btn btn-sm btn-warning">Editar</button> <button class="btn btn-sm btn-danger">Eliminar</button></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+        </div>
+    </main>
+    <!-- Footer -->
+    <footer class="bg-dark text-light py-4 mt-5">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-4 mb-3 mb-md-0">
+                    <h5>TechNova Store</h5>
+                    <p>© 2025 Todos los derechos reservados.</p>
+                </div>
+                <div class="col-md-4 mb-3 mb-md-0">
+                    <h5>Contacto</h5>
+                    <p>Email: contacto@technova.cl</p>
+                    <p>Teléfono: +56 9 1234 5678</p>
+                </div>
+                <div class="col-md-4">
+                    <h5>Redes Sociales</h5>
+                    <a href="#" class="text-light me-2"><i class="bi bi-facebook"></i></a>
+                    <a href="https://www.instagram.com/c10h15n.20/" class="text-light me-2" target="_blank"><i class="bi bi-instagram"></i></a>
+                    <a href="#" class="text-light"><i class="bi bi-twitter"></i></a>
+                </div>
+            </div>
+        </div>
+    </footer>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
+    <script src="assets/js/funciones.js"></script>
+</body>
+</html>

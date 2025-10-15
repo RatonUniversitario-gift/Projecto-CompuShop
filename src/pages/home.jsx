@@ -1,38 +1,19 @@
-// Importamos el componente que muestra el nombre del usuario
-import UserBar from '../components/UserBar.jsx'
-// Importamos los componentes de cuadrícula de productos (Axios y Fetch)
-import ProductGrid from '../components/ProductGrid.jsx'
-// Importamos el hook de autenticación para obtener el token
-import { useAuth } from '../context/AuthContext.jsx'
-import Header from '../components/Header.jsx'
-import Footer from '../components/Footer.jsx'
+// src/pages/Home.jsx
+import Hero from "../components/Hero.jsx";
+import ProductosDestacados from "../components/ProductosDestacados.jsx";
 
-// Componente de la página Home donde se muestran los productos registrados
 export default function Home() {
-  // Obtenemos token desde el contexto de autenticación
-  const { token } = useAuth()
-  // Renderizamos la página con ambas cuadrículas (Axios y Fetch)
   return (
-    <>
-      {/* Contenedor principal con padding */}
-      <div className="container py-3">
-        <Header />
-        {/* Barra con el nombre del usuario */}
-        <UserBar />
-        {/* Título de la página */}
-        <h1 className="mb-4">Productos (Home)</h1>
-        {/* Sección usando Axios */}
-        <section className="mb-5">
-          {/* Subtítulo para Axios */}
-          <h2 className="h4">Listado con Axios</h2>
-          {/* Componente de cuadrícula que usa Axios */}
-          <ProductGrid token={token} />
-        </section>
-        {/* Sección usando Fetch */}
-        {/* Aquí podrías agregar la sección de ProductGridFetch si la necesitas */}
-        <Footer />
-      </div>
-    </>
-  )
-}
+    <main className="bg-dark text-white p-0 m-0">
+      {/* === HERO === */}
+      <section className="hero-section m-0 p-0">
+        <Hero />
+      </section>
 
+      {/* === PRODUCTOS DESTACADOS === */}
+      <section className="productos-destacados-section m-0 p-0">
+        <ProductosDestacados />
+      </section>
+    </main>
+  );
+}
