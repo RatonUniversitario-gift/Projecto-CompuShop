@@ -25,7 +25,7 @@ import Registro from "./pages/Registro.jsx";
 
 // === Páginas informativas ===
 import Blogs from "./pages/Blogs.jsx";
-import BlogDetalle from "./pages/BlogDetalle.jsx";
+import BlogDetalle from "./pages/BlogDetalle.jsx"; 
 import Nosotros from "./pages/Nosotros.jsx";
 import Contacto from "./pages/Contacto.jsx";
 

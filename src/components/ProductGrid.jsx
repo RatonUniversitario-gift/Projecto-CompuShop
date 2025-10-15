@@ -45,8 +45,11 @@ export default function ProductGrid({ token }) {
           p.imagenes?.[0]?.url ||
           p.imagenes?.[0] ||
           "https://via.placeholder.com/300x200?text=Sin+Imagen";
+<<<<<<< Updated upstream
         
           
+=======
+>>>>>>> Stashed changes
 
     
         return (

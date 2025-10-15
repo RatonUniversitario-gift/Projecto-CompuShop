@@ -6,14 +6,16 @@ import ProductImagesSlider from "../components/ProductImagesSlider.jsx";
 import axios from "axios";
 
 export default function DetalleProducto() {
-  const { id } = useParams();            // ID del producto desde la URL
-  const { token } = useAuth();           // Token del usuario (si está logueado)
-  const { addToCart } = useCart();       // Función del carrito global
+  const { id } = useParams();
+  const { token } = useAuth();
+  const { addToCart } = useCart();
+
   const [producto, setProducto] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
 
   const STORE_BASE = import.meta.env.VITE_XANO_STORE_BASE;
+  const BASE_URL = "https://x8ki-letl-twmt.n7.xano.io/api:K1k2AGUp";
 
   useEffect(() => {
     async function fetchProducto() {
@@ -24,7 +26,7 @@ export default function DetalleProducto() {
         });
         setProducto(data);
       } catch (err) {
-        console.error(err);
+        console.error("Error al cargar producto:", err);
         setError("No se pudo cargar la información del producto.");
       } finally {
         setLoading(false);
@@ -56,13 +58,21 @@ export default function DetalleProducto() {
 
   const precio = Number(producto.precio || 0).toLocaleString("es-CL");
 
+  // 🔧 Armar URLs absolutas de imágenes
+  const imagenesConUrl = (producto.imagenes || []).map((img) => ({
+    ...img,
+    path: img.path?.startsWith("http")
+      ? img.path
+      : `${BASE_URL}${img.path?.startsWith("/") ? "" : "/"}${img.path}`,
+  }));
+
   return (
     <main className="container py-5 text-white">
       <div className="row align-items-center g-4">
         {/* === Columna de imágenes === */}
         <div className="col-12 col-md-6">
           <ProductImagesSlider
-            images={producto.imagenes || producto.images}
+            images={imagenesConUrl.length ? imagenesConUrl : [{ path: "/assets/img/placeholder.png" }]}
             alt={producto.nombre}
           />
         </div>
@@ -94,7 +104,7 @@ export default function DetalleProducto() {
           <div className="d-flex flex-wrap gap-3 mt-4">
             <button
               className="btn btn-naranja"
-              onClick={() => addToCart()}
+              onClick={() => addToCart(producto)} // ✅ pasa el producto correctamente
               disabled={producto.stock === 0}
             >
               <i className="bi bi-cart-plus me-2"></i>Agregar al carrito

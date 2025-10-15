@@ -1,27 +1,46 @@
 import { useEffect, useState } from "react";
-import { useAuth } from "../context/AuthContext.jsx";
-import { useCart } from "../context/CartContext.jsx";
 import { listProducts } from "../api/xano.js";
 import { Link } from "react-router-dom";
+import { useCart } from "../context/CartContext.jsx";
 
 export default function ProductosDestacados() {
-  const { token } = useAuth();
   const { addToCart } = useCart();
+<<<<<<< Updated upstream
   const [productos, setProductos] = useState([]);
   const [error, setError] = useState("");
+=======
+  const [items, setItems] = useState([]);
+
+  const BASE_URL = "https://x8ki-letl-twmt.n7.xano.io/api:K1k2AGUp";
+  const buildImageUrl = (img) => {
+   
+    const precio = Number(producto.precio || 0).toLocaleString("es-CL");
+    const imagen =
+      producto.imagenes?.[0]?.url ||
+      producto.imagenes?.[0] ||
+      "https://via.placeholder.com/300x200?text=Sin+Imagen";
+>>>>>>> Stashed changes
 
   useEffect(() => {
-    async function fetchDestacados() {
+    (async () => {
       try {
+<<<<<<< Updated upstream
         const data = await listProducts({ token, limit: 4 });
         setProductos(data);
       } catch (err) {
         console.error("Error al cargar productos destacados:", err);
         setError("No se pudieron cargar los productos destacados.");
+=======
+        const data = await listProducts({ limit: 8 });
+        setItems(Array.isArray(data) ? data : []);
+      } catch (e) {
+        console.error("No se pudieron cargar destacados:", e);
+>>>>>>> Stashed changes
       }
-    }
-    fetchDestacados();
-  }, [token]);
+    })();
+  }, []);
+
+  if (!items.length) return null;
 
   if (error) {
     return (
@@ -40,9 +59,10 @@ export default function ProductosDestacados() {
 
   return (
     <section className="seccion-productos-destacados py-5">
-      <div className="container text-center">
-        <h2 className="text-white mb-4">Productos Destacados</h2>
+      <div className="container">
+        <h2 className="text-center text-white mb-4">Productos destacados</h2>
         <div className="row g-4 justify-content-center">
+<<<<<<< Updated upstream
           {productos.map((p) => {
             const precio = Number(p.precio || 0).toLocaleString("es-CL");
             const imagen =
@@ -104,12 +124,51 @@ export default function ProductosDestacados() {
                         Ver detalle
                       </Link>
                     </div>
+=======
+          {items.map((p) => (
+            <div key={p.id} className="col-12 col-sm-6 col-md-4 col-lg-3">
+              <div className="card tarjeta-producto bg-dark text-white border-primary shadow-sm h-100">
+                <img
+                  src={imagen(p.imagenes?.[0])}
+                  alt={p.nombre}
+                  className="card-img-top"
+                  style={{
+                    objectFit: "contain",
+                    height: "220px",
+                    backgroundColor: "#0b0c10",
+                    padding: "10px",
+                  }}
+                />
+                <div className="card-body d-flex flex-column">
+                  <h5 className="card-title">{p.nombre}</h5>
+                  <p className="text-secondary small flex-grow-1">
+                    {p.descripcion?.length > 60
+                      ? p.descripcion.slice(0, 60) + "…"
+                      : p.descripcion}
+                  </p>
+                  <h6 className="text-primary fw-bold mb-3">
+                    ${Number(p.precio || 0).toLocaleString("es-CL")}
+                  </h6>
+
+                  <div className="d-flex gap-2 mt-auto">
+                    <button
+                      onClick={() => addToCart(p)}
+                      className="btn btn-naranja w-50"
+                    >
+                      <i className="bi bi-cart-plus me-1"></i>Agregar
+                    </button>
+
+                    <Link to={`/producto/${p.id}`} className="btn btn-detalle w-50">
+                      Ver detalle
+                    </Link>
+>>>>>>> Stashed changes
                   </div>
                 </div>
               </div>
             );
           })}
         </div>
+<<<<<<< Updated upstream
 
         <div className="mt-5">
           <Link
@@ -119,6 +178,8 @@ export default function ProductosDestacados() {
             Ir al catálogo completo
           </Link>
         </div>
+=======
+>>>>>>> Stashed changes
       </div>
     </section>
   );
