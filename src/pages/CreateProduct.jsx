@@ -10,6 +10,8 @@ export default function CreateProduct() {
   // Obtenemos token del contexto
   const { token } = useAuth()
   // Estado del formulario de producto
+  // Usamos las mismas claves que los inputs (inglés) para evitar
+  // el warning de controlled/uncontrolled y mantener consistencia
   const [form, setForm] = useState({ name: '', description: '', price: 0, stock: 0, brand: '', category: '' })
   // Estado para archivos de imágenes seleccionados
   const [files, setFiles] = useState([])
@@ -45,11 +47,11 @@ export default function CreateProduct() {
       // Crear producto enviando las imágenes en el mismo POST
       const created = await createProduct(token, {
         name: form.name,
-        description: form.descripcion,
-        price: Number(form.precio),
+        description: form.description,
+        price: Number(form.price),
         stock: Number(form.stock),
-        marca: form.marca,
-        categoría: form.categoría,
+        brand: form.brand,
+        category: form.category,
         imagenes: images.length > 0 ? images : undefined,
         activo: true,
       })

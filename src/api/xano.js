@@ -11,12 +11,13 @@ export const makeAuthHeader = (token) => ({
 export async function createProduct(token, payload) {
   // Adaptamos los nombres de campos para que coincidan con la base de datos
   const adaptedPayload = {
-    nombre: payload.name,
-    descripcion: payload.description,
-    precio: payload.price,
-    stock: payload.stock,
-    marca: payload.brand,
-    categoria: payload.category,
+    // Aceptamos payload en inglés o español sin perder datos
+    nombre: payload.name ?? payload.nombre ?? "",
+    descripcion: payload.description ?? payload.descripcion ?? "",
+    precio: Number(payload.price ?? payload.precio ?? 0),
+    stock: Number(payload.stock ?? payload.existencias ?? 0),
+    marca: payload.brand ?? payload.marca ?? "",
+    categoria: payload.category ?? payload.categoria ?? payload.categoría ?? "",
     activo: payload.activo ?? true
   };
 
@@ -26,7 +27,7 @@ export async function createProduct(token, payload) {
     adaptedPayload.imagenes = payload.imagenes
       .map((img) => ({
         access: img.access ?? "public",
-        path: img.path ?? img.url ?? img.file_path ?? img.location ?? img?.file?.path ?? (Array.isArray(img?.files) ? img.files[0]?.path : undefined) ?? img?.image?.path ?? "",
+        path: img.path ?? img.url ?? img.file_path ?? img.location ?? img?.file?.path ?? img?.image?.path ?? (Array.isArray(img?.files) ? img.files[0]?.path : undefined) ?? "",
         name: img.name ?? img.filename ?? img?.file?.name ?? img?.image?.name ?? "",
         type: img.type ?? img.filetype ?? "",
         size: img.size ?? 0,
@@ -48,59 +49,28 @@ export async function createProduct(token, payload) {
 
 // 2) Subir imágenes
 export async function uploadImages(token, files) {
-  // Preferir tu nuevo endpoint dedicado
+  // Primer intento: endpoint típico de Xano
   try {
-    const fd = new FormData();
-    for (const f of files) fd.append("files", f); // Xano: múltiples con misma key
+    const fd1 = new FormData();
+    for (const f of files) fd1.append("content[]", f);
     const { data } = await axios.post(
-      `${STORE_BASE}/upload/images`,
-      fd,
+      `${STORE_BASE}/upload/image`,
+      fd1,
       { headers: { ...makeAuthHeader(token) } }
     );
-    // Normalizamos diferentes formas de respuesta
-    let filesArr = [];
-    if (Array.isArray(data)) filesArr = data;
-    else if (Array.isArray(data?.files)) filesArr = data.files;
-    else if (data?.file) filesArr = Array.isArray(data.file) ? data.file : [data.file];
-    else if (data?.image) filesArr = Array.isArray(data.image) ? data.image : [data.image];
-    return filesArr
-      .map((img) => ({
-        access: img.access ?? "public",
-        path: img.path ?? img.url ?? img.file_path ?? img.location ?? img?.file?.path ?? (Array.isArray(img?.files) ? img.files[0]?.path : undefined) ?? img?.image?.path ?? "",
-        name: img.name ?? img.filename ?? img?.file?.name ?? img?.image?.name ?? "",
-        type: img.type ?? img.filetype ?? "",
-        size: img.size ?? 0,
-        mime: img.mime ?? img.mimetype ?? "",
-        meta: img.meta ?? {},
-      }))
-      .filter((i) => i.path);
+    return Array.isArray(data) ? data : (data.files || []);
   } catch (err) {
     const msg = err?.response?.data?.message || err.message || "";
-    // Fallback a endpoints estándar si tu custom no existe
+    // Fallback: algunos proyectos usan /upload y files[]
     if (err?.response?.status === 404 || /Unable to locate request/i.test(msg)) {
-      const fd1 = new FormData();
-      for (const f of files) fd1.append("content[]", f);
+      const fd2 = new FormData();
+      for (const f of files) fd2.append("files[]", f);
       const { data } = await axios.post(
-        `${STORE_BASE}/upload/image`,
-        fd1,
+        `${STORE_BASE}/upload`,
+        fd2,
         { headers: { ...makeAuthHeader(token) } }
       );
-      let filesArr = [];
-      if (Array.isArray(data)) filesArr = data;
-      else if (Array.isArray(data?.files)) filesArr = data.files;
-      else if (data?.file) filesArr = Array.isArray(data.file) ? data.file : [data.file];
-      else if (data?.image) filesArr = Array.isArray(data.image) ? data.image : [data.image];
-      return filesArr
-        .map((img) => ({
-          access: img.access ?? "public",
-          path: img.path ?? img.url ?? img.file_path ?? img.location ?? img?.file?.path ?? (Array.isArray(img?.files) ? img.files[0]?.path : undefined) ?? img?.image?.path ?? "",
-          name: img.name ?? img.filename ?? img?.file?.name ?? img?.image?.name ?? "",
-          type: img.type ?? img.filetype ?? "",
-          size: img.size ?? 0,
-          mime: img.mime ?? img.mimetype ?? "",
-          meta: img.meta ?? {},
-        }))
-        .filter((i) => i.path);
+      return Array.isArray(data) ? data : (data.files || []);
     }
     throw err;
   }
