@@ -15,7 +15,7 @@ import Footer from "./components/Footer.jsx";
 
 // === Páginas principales ===
 import Home from "./pages/Home.jsx";
-import Productos from "./pages/Productos.jsx";
+import Productos from "./pages/productos.jsx";
 import DetalleProducto from "./pages/DetalleProducto.jsx";
 import Carrito from "./pages/Carrito.jsx";
 import Login from "./pages/Login.jsx";

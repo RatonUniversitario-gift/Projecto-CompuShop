@@ -40,9 +40,15 @@ export default function ProductGrid({ token }) {
     <div className="row g-4 justify-content-center">
       {productos.map((p) => {
         const precio = Number(p.precio || 0).toLocaleString("es-CL");
+        // Intentar obtener la imagen de diferentes formas posibles
         const imagen =
-          p.imagenes?.[0]?.path || "/assets/img/placeholder.png"; // fallback
+          p.imagenes?.[0]?.url ||
+          p.imagenes?.[0] ||
+          "https://via.placeholder.com/300x200?text=Sin+Imagen";
+        
+          
 
+    
         return (
           <div key={p.id} className="col-12 col-sm-6 col-md-4 col-lg-3">
             <div className="card tarjeta-producto h-100 bg-dark text-white border-primary shadow-sm hover-scale">
@@ -51,6 +57,7 @@ export default function ProductGrid({ token }) {
                   src={imagen}
                   alt={p.nombre}
                   className="card-img-top rounded-top"
+                  style={{ height: "220px", objectFit: "contain", padding: "10px" }}
                 />
                 {p.descuento ? (
                   <span className="badge bg-success position-absolute top-0 start-0 m-2">
