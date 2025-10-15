@@ -1,22 +1,29 @@
 // src/context/AuthContext.jsx
-import { createContext, useContext, useEffect, useMemo, useState } from 'react';
-import axios from 'axios';
+import { createContext, useContext, useEffect, useMemo, useState } from "react";
+import axios from "axios";
 
 // URLs desde variables de entorno
 const AUTH_BASE = import.meta.env.VITE_XANO_AUTH_BASE;
-const TOKEN_TTL_SEC = Number(import.meta.env.VITE_XANO_TOKEN_TTL_SEC || '86400');
+const TOKEN_TTL_SEC = Number(import.meta.env.VITE_XANO_TOKEN_TTL_SEC || "86400");
+
+// ✅ Lista de correos administradores desde .env
+const ADMIN_EMAILS =
+  (import.meta.env.VITE_ADMIN_EMAILS || "")
+    .split(",")
+    .map((e) => e.trim().toLowerCase())
+    .filter(Boolean);
 
 const AuthContext = createContext(null);
 
-// Decodifica un JWT para obtener su payload (incluye 'exp' si existe)
+// Decodifica un JWT para obtener su payload
 function decodeJwt(token) {
   if (!token) return null;
   try {
-    const parts = token.split('.');
+    const parts = token.split(".");
     if (parts.length < 2) return null;
-    let payload = parts[1].replace(/-/g, '+').replace(/_/g, '/');
+    let payload = parts[1].replace(/-/g, "+").replace(/_/g, "/");
     const pad = payload.length % 4;
-    if (pad) payload += '='.repeat(4 - pad);
+    if (pad) payload += "=".repeat(4 - pad);
     return JSON.parse(atob(payload));
   } catch {
     return null;
@@ -24,85 +31,97 @@ function decodeJwt(token) {
 }
 
 export function AuthProvider({ children }) {
-  const [token, setToken] = useState(() => localStorage.getItem('auth_token') || '');
+  const [token, setToken] = useState(() => localStorage.getItem("auth_token") || "");
   const [user, setUser] = useState(() => {
-    const raw = localStorage.getItem('auth_user');
+    const raw = localStorage.getItem("auth_user");
     return raw ? JSON.parse(raw) : null;
   });
   const [expiresAt, setExpiresAt] = useState(() => {
-    const raw = localStorage.getItem('auth_exp');
+    const raw = localStorage.getItem("auth_exp");
     return raw ? Number(raw) : null;
   });
 
   // Persistir token y calcular expiración
   useEffect(() => {
     if (!token) {
-      localStorage.removeItem('auth_token');
-      localStorage.removeItem('auth_exp');
+      localStorage.removeItem("auth_token");
+      localStorage.removeItem("auth_exp");
       setExpiresAt(null);
       return;
     }
 
-    localStorage.setItem('auth_token', token);
+    localStorage.setItem("auth_token", token);
     const payload = decodeJwt(token);
-    const expMs = payload?.exp ? payload.exp * 1000 : Date.now() + TOKEN_TTL_SEC * 1000;
+    const expMs = payload?.exp
+      ? payload.exp * 1000
+      : Date.now() + TOKEN_TTL_SEC * 1000;
     setExpiresAt(expMs);
-    localStorage.setItem('auth_exp', String(expMs));
+    localStorage.setItem("auth_exp", String(expMs));
   }, [token]);
 
   // Persistir usuario
   useEffect(() => {
-    if (user) localStorage.setItem('auth_user', JSON.stringify(user));
-    else localStorage.removeItem('auth_user');
+    if (user) localStorage.setItem("auth_user", JSON.stringify(user));
+    else localStorage.removeItem("auth_user");
   }, [user]);
 
-  // Función auxiliar para headers
+  // Headers
   const makeAuthHeader = (t) => ({ Authorization: `Bearer ${t}` });
 
-  // ✅ Solo Axios: login
+  // ✅ LOGIN con detección de admin por email
   async function login({ email, password }) {
-    const { data } = await axios.post(`${AUTH_BASE}/auth/login`, { email, password });
-    const newToken = data?.authToken || data?.token || '';
-    const newUser = data?.user || { name: data?.name || email };
+    const { data } = await axios.post(`${AUTH_BASE}/auth/login`, {
+      email,
+      password,
+    });
+
+    const newToken = data?.authToken || data?.token || "";
+    let newUser = data?.user || { name: data?.name || email, email };
+
+    // 🔥 Detectar admin según la lista de correos del .env
+    const isAdmin = ADMIN_EMAILS.includes(email.toLowerCase());
+    newUser.role = isAdmin ? "admin" : "user";
+
     setToken(newToken);
     setUser(newUser);
+
     return { token: newToken, user: newUser };
   }
 
-  // ✅ Solo Axios: logout
+  // ✅ Logout
   async function logout() {
     try {
       await axios.post(`${AUTH_BASE}/auth/logout`, {}, { headers: makeAuthHeader(token) });
-    } catch (e) {
-      console.warn('Logout falló en el backend, pero se limpió localmente');
+    } catch {
+      console.warn("Logout falló en backend, pero se limpió localmente");
     }
-    setToken('');
+    setToken("");
     setUser(null);
     setExpiresAt(null);
-    localStorage.removeItem('auth_token');
-    localStorage.removeItem('auth_user');
-    localStorage.removeItem('auth_exp');
+    localStorage.removeItem("auth_token");
+    localStorage.removeItem("auth_user");
+    localStorage.removeItem("auth_exp");
   }
 
-  // ✅ Solo Axios: refresh (opcional, si tu Xano lo soporta)
+  // ✅ Refresh token
   async function refresh() {
     const { data } = await axios.post(`${AUTH_BASE}/auth/refresh_token`, {}, { headers: makeAuthHeader(token) });
-    const newToken = data?.authToken || data?.token || '';
+    const newToken = data?.authToken || data?.token || "";
     setToken(newToken);
     return newToken;
   }
 
-  // Efecto de aviso de expiración (opcional, pero útil)
+  // Expiración automática
   useEffect(() => {
     if (!expiresAt) return;
-    const MARGIN_MS = 2 * 60 * 1000; // 2 minutos antes
+    const MARGIN_MS = 2 * 60 * 1000;
     const delay = Math.max(expiresAt - Date.now() - MARGIN_MS, 0);
     const id = setTimeout(async () => {
-      if (window.confirm('Tu sesión está por expirar. ¿Renovar?')) {
+      if (window.confirm("Tu sesión está por expirar. ¿Renovar?")) {
         try {
           await refresh();
-        } catch (e) {
-          alert('No se pudo renovar la sesión. Se cerrará.');
+        } catch {
+          alert("No se pudo renovar la sesión. Se cerrará.");
           await logout();
         }
       }
@@ -110,20 +129,23 @@ export function AuthProvider({ children }) {
     return () => clearTimeout(id);
   }, [expiresAt]);
 
-  const value = useMemo(() => ({
-    token,
-    user,
-    expiresAt,
-    login,
-    logout,
-    refresh,
-  }), [token, user, expiresAt]);
+  const value = useMemo(
+    () => ({
+      token,
+      user,
+      expiresAt,
+      login,
+      logout,
+      refresh,
+    }),
+    [token, user, expiresAt]
+  );
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 }
 
 export function useAuth() {
   const ctx = useContext(AuthContext);
-  if (!ctx) throw new Error('useAuth debe usarse dentro de <AuthProvider>');
+  if (!ctx) throw new Error("useAuth debe usarse dentro de <AuthProvider>");
   return ctx;
 }

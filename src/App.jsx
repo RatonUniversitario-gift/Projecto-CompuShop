@@ -1,58 +1,206 @@
-// src/App.jsx - Contenedor de rutas de la aplicación
-// Este archivo define las rutas: /home, /login, /logout y /crear-productos
+// src/App.jsx
+import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
+import { AuthProvider, useAuth } from "./context/AuthContext.jsx";
+import { CartProvider } from "./context/CartContext.jsx";
 
-// Importamos componentes de React Router para definir el enrutado
-import { Routes, Route, Navigate, Link } from 'react-router-dom'
-// Importamos el hook de autenticación para conocer usuario y token
-import { useAuth } from './context/AuthContext.jsx'
-// Importamos las páginas que vamos a mostrar
-import Home from './pages/home.jsx'
-import Login from './pages/Login.jsx'
-import Logout from './pages/Logout.jsx'
-import CreateProduct from './pages/CreateProduct.jsx'
-// Importamos estilos
-import './App.css'
+// === Estilos globales ===
+import "bootstrap/dist/css/bootstrap.min.css";
+import "bootstrap-icons/font/bootstrap-icons.css";
+import "./styles/estilos.css";
 
-// Componente principal que renderiza la barra superior y las rutas
-export default function App() {
-  // Obtenemos el contexto para saber si hay usuario
-  const { user } = useAuth() // Leemos usuario actual
+// === Componentes comunes ===
+import Header from "./components/Header.jsx";
+import HeaderAdmin from "./components/HeaderAdmin.jsx";
+import Footer from "./components/Footer.jsx";
 
-  // Renderizamos la estructura de navegación y las rutas
+// === Páginas principales ===
+import Home from "./pages/Home.jsx";
+import Productos from "./pages/Productos.jsx";
+import DetalleProducto from "./pages/DetalleProducto.jsx";
+import Carrito from "./pages/Carrito.jsx";
+import Login from "./pages/Login.jsx";
+import Logout from "./pages/Logout.jsx";
+import CreateProduct from "./pages/CreateProduct.jsx";
+import Registro from "./pages/Registro.jsx";
+
+// === Páginas informativas ===
+import Blogs from "./pages/Blogs.jsx";
+import BlogDetalle from "./pages/BlogDetalle.jsx";
+import Nosotros from "./pages/Nosotros.jsx";
+import Contacto from "./pages/Contacto.jsx";
+
+// === Páginas de administración ===
+import AdminHome from "./pages/AdminHome.jsx";
+import AdminUsuarios from "./pages/AdminUsuarios.jsx";
+import AdminProductos from "./pages/AdminProductos.jsx";
+
+/* 🔒 Ruta protegida con validación de usuario y rol */
+function PrivateRoute({ element: Component, requiredRole }) {
+  const { user } = useAuth();
+
+  if (!user) return <Navigate to="/login" replace />;
+
+  if (requiredRole && user.role !== requiredRole) {
+    alert("⚠️ Acceso restringido. Solo administradores pueden ingresar.");
+    return <Navigate to="/" replace />;
+  }
+
+  // 🔥 Si el usuario es admin, muestra HeaderAdmin
+  const isAdmin = user?.role === "admin";
+
   return (
-    // Contenedor general
-    <div className="container py-4">
-      {/* Barra de navegación simple */}
-      <nav className="d-flex align-items-center gap-3 mb-4">
-        {/* Enlace a Home */}
-        <Link to="/home" className="btn btn-primary">Home</Link>
-        {/* Enlace a Crear Productos */}
-        <Link to="/crear-productos" className="btn btn-outline-primary">Crear productos</Link>
-        {/* Mostrar Login si NO hay usuario; si hay usuario, mostrar Logout */}
-        {user ? (
-          <Link to="/logout" className="btn btn-outline-secondary">Logout</Link>
-        ) : (
-          <Link to="/login" className="btn btn-outline-secondary">Login</Link>
-        )}
-        {/* Nombre del usuario a la derecha */}
-        <span className="ms-auto text-primary">{user?.name ? `Conectado: ${user.name}` : 'No conectado'}</span>
-      </nav>
+    <>
+      {isAdmin ? <HeaderAdmin /> : <Header />}
+      {Component}
+      <Footer />
+    </>
+  );
+}
 
-      {/* Definición de rutas */}
-      <Routes>
-        {/* Redirección raíz a /home */}
-        <Route path="/" element={<Navigate to="/home" replace />} />
-        {/* Página de Home: muestra productos */}
-        <Route path="/home" element={<Home />} />
-        {/* Página de Login: formulario de inicio de sesión */}
-        <Route path="/login" element={<Login />} />
-        {/* Página de Logout: cierra la sesión */}
-        <Route path="/logout" element={<Logout />} />
-        {/* Página de creación de productos: protegida por sesión en el propio componente */}
-        <Route path="/crear-productos" element={<CreateProduct />} />
-        {/* Ruta comodín: si no existe, redirige a home */}
-        <Route path="*" element={<Navigate to="/home" replace />} />
-      </Routes>
-    </div>
-  )
+/* 🌐 Router principal */
+export default function App() {
+  return (
+    <AuthProvider>
+      <CartProvider>
+        <BrowserRouter>
+          <Routes>
+            {/* === Páginas públicas === */}
+            <Route
+              path="/"
+              element={
+                <>
+                  <Header />
+                  <Home />
+                  <Footer />
+                </>
+              }
+            />
+            <Route
+              path="/productos"
+              element={
+                <>
+                  <Header />
+                  <Productos />
+                  <Footer />
+                </>
+              }
+            />
+            <Route
+              path="/producto/:id"
+              element={
+                <>
+                  <Header />
+                  <DetalleProducto />
+                  <Footer />
+                </>
+              }
+            />
+            <Route
+              path="/blogs"
+              element={
+                <>
+                  <Header />
+                  <Blogs />
+                  <Footer />
+                </>
+              }
+            />
+            <Route
+              path="/blogs/:id"
+              element={
+                <>
+                  <Header />
+                  <BlogDetalle />
+                  <Footer />
+                </>
+              }
+            />
+            <Route
+              path="/nosotros"
+              element={
+                <>
+                  <Header />
+                  <Nosotros />
+                  <Footer />
+                </>
+              }
+            />
+            <Route
+              path="/contacto"
+              element={
+                <>
+                  <Header />
+                  <Contacto />
+                  <Footer />
+                </>
+              }
+            />
+
+            {/* === Páginas funcionales === */}
+            <Route
+              path="/carrito"
+              element={
+                <>
+                  <Header />
+                  <Carrito />
+                  <Footer />
+                </>
+              }
+            />
+            <Route
+              path="/login"
+              element={
+                <>
+                  <Header />
+                  <Login />
+                  <Footer />
+                </>
+              }
+            />
+            <Route
+              path="/registro"
+              element={
+                <>
+                  <Header />
+                  <Registro />
+                  <Footer />
+                </>
+              }
+            />
+            <Route
+              path="/logout"
+              element={
+                <>
+                  <Header />
+                  <Logout />
+                  <Footer />
+                </>
+              }
+            />
+
+            {/* === Rutas del panel admin protegidas === */}
+            <Route
+              path="/admin"
+              element={<PrivateRoute element={<AdminHome />} requiredRole="admin" />}
+            />
+            <Route
+              path="/admin/usuarios"
+              element={<PrivateRoute element={<AdminUsuarios />} requiredRole="admin" />}
+            />
+            <Route
+              path="/admin/productos"
+              element={<PrivateRoute element={<AdminProductos />} requiredRole="admin" />}
+            />
+            <Route
+              path="/admin/crear-producto"
+              element={<PrivateRoute element={<CreateProduct />} requiredRole="admin" />}
+            />
+
+            {/* === Redirección por defecto === */}
+            <Route path="*" element={<Navigate to="/" replace />} />
+          </Routes>
+        </BrowserRouter>
+      </CartProvider>
+    </AuthProvider>
+  );
 }

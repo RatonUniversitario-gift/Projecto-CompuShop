@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <!-- ================= HEAD: Metadatos, estilos y favicon ================= -->
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Contacto - TechNova Store">
+    <title>Contacto | TechNova Store</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="assets/css/estilos.css">
+    <link rel="icon" type="image/png" href="assets/img/1757355736.png">
+</head>
+<body class="fondo-oscuro">
+    <!-- ================= HEADER: Barra superior con logo y navegación principal ================= -->
+    <header class="bg-dark text-white py-3">
+        <div class="container d-flex justify-content-between align-items-center">
+            <a href="index.html" class="d-flex align-items-center text-decoration-none">
+                <img src="assets/img/1757355736.png" alt="Logo TechNova Store" class="logo me-2" height="48">
+                <span class="fs-3 fw-bold nombre-tienda">TechNova Store</span>
+            </a>
+            <nav class="menu-navegacion">
+                <ul class="nav">
+                    <li class="nav-item"><a class="nav-link text-white" href="index.html">Inicio</a></li>
+                    <li class="nav-item"><a class="nav-link text-white" href="productos.html">Productos</a></li>
+                    <li class="nav-item"><a class="nav-link text-white" href="blogs.html">Blogs</a></li>
+                    <li class="nav-item"><a class="nav-link text-white" href="nosotros.html">Nosotros</a></li>
+                    <li class="nav-item"><a class="nav-link text-white" href="contacto.html">Contacto</a></li>
+                    <li class="nav-item"><a class="nav-link text-white" href="login.html">Login</a></li>
+                </ul>
+            </nav>
+            <div class="d-flex align-items-center">
+                <div class="posicion-carrito">
+                    <a href="carrito.html" class="text-white position-relative" aria-label="Ver carrito">
+                        <i class="bi bi-bag fs-4"></i>
+                        <span id="contador-carrito" class="badge bg-danger position-absolute top-0 start-100 translate-middle">0</span>
+                    </a>
+                </div>
+                <!-- Botón de accesibilidad para cambiar tema -->
+                <button id="btn-tema" class="btn btn-outline-primary ms-3" aria-label="Cambiar tema" title="Cambiar tema">
+                    <i class="bi bi-circle-half"></i> Tema
+                </button>
+            </div>
+        </div>
+    </header>
+    <!-- ================= MAIN: Formulario de contacto ================= -->
+    <main class="container py-5">
+        <section class="row justify-content-center">
+            <!-- Formulario de contacto con validaciones y verificación de seguridad -->
+            <div class="col-12 col-lg-8">
+                <div class="card bg-dark text-white border-primary shadow-lg">
+                    <div class="card-body p-4">
+                        <h2 class="text-center mb-2">Contáctanos</h2>
+                        <p class="text-center text-secondary mb-4">Cuéntanos sobre tu proyecto y te responderemos pronto</p>
+                        <form id="formulario-contacto" class="formulario-contacto" novalidate>
+                            <div class="row g-3">
+                                <div class="col-md-6">
+                                    <label for="nombre" class="form-label">Nombre Completo *</label>
+                                    <input type="text" class="form-control" id="nombre" name="nombre" required maxlength="50">
+                                    <div class="invalid-feedback">Por favor ingresa tu nombre completo.</div>
+                                </div>
+                                <div class="col-md-6">
+                                    <label for="correo" class="form-label">Correo Electrónico *</label>
+                                    <input type="email" class="form-control" id="correo" name="correo" required pattern="^[a-zA-Z0-9._%+-]+@(duoc\.cl|profesor\.duoc\.cl|gmail\.com)$">
+                                    <div class="invalid-feedback">Por favor ingresa un correo electrónico válido.</div>
+                                </div>
+                                <div class="col-md-6">
+                                    <label for="telefono" class="form-label">Teléfono *</label>
+                                    <input type="tel" class="form-control" id="telefono" name="telefono" required pattern="^[0-9+\- ]{8,15}$">
+                                    <div class="invalid-feedback">Por favor ingresa tu número de teléfono.</div>
+                                </div>
+                                <div class="col-12">
+                                    <label for="descripcion" class="form-label">Motivo de contacto *</label>
+                                    <textarea class="form-control" id="descripcion" name="descripcion" rows="3" required maxlength="500" placeholder="Escribe aquí los detalles del por qué te quieres comunicar"></textarea>
+                                    <div class="invalid-feedback">Por favor describe tu motivo de contacto.</div>
+                                </div>
+                                <!-- Verificación de seguridad -->
+                                <div class="col-12">
+                                    <label class="form-label">Verificación de Seguridad *</label>
+                                    <div class="mb-2">Haz clic en el círculo</div>
+                                    <div class="d-flex gap-2 mb-2" id="verificacion-iconos">
+                                        <button type="button" class="btn btn-light icono-verificacion" data-valor="triangulo" aria-label="Triángulo"><i class="bi bi-play-fill"></i></button>
+                                        <button type="button" class="btn btn-light icono-verificacion" data-valor="cuadro" aria-label="Cuadro"><i class="bi bi-square"></i></button>
+                                        <button type="button" class="btn btn-light icono-verificacion" data-valor="circulo" aria-label="Círculo"><i class="bi bi-circle-fill"></i></button>
+                                        <button type="button" class="btn btn-light icono-verificacion" data-valor="estrella" aria-label="Estrella"><i class="bi bi-star-fill"></i></button>
+                                    </div>
+                                    <input type="hidden" id="verificacion" name="verificacion" required>
+                                    <div class="invalid-feedback">Selecciona el icono correcto para continuar.</div>
+                                </div>
+                            </div>
+                            <div class="mt-4">
+                                <button type="submit" class="btn btn-info w-100 fw-bold" id="btn-enviar-contacto"><i class="bi bi-send"></i> Enviar Mensaje</button>
+                            </div>
+                            <div id="mensaje-contacto" class="mt-3 text-center d-none"></div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+    <!-- ================= FOOTER: Información de contacto y redes sociales ================= -->
+    <footer class="bg-dark text-light py-4 mt-5">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-4 mb-3 mb-md-0">
+                    <h5>TechNova Store</h5>
+                    <p>© 2025 Todos los derechos reservados.</p>
+                </div>
+                <div class="col-md-4 mb-3 mb-md-0">
+                    <h5>Contacto</h5>
+                    <p>Email: contacto@technova.cl</p>
+                    <p>Teléfono: +56 9 1234 5678</p>
+                </div>
+                <div class="col-md-4">
+                    <h5>Redes Sociales</h5>
+                    <a href="#" class="text-light me-2"><i class="bi bi-facebook"></i></a>
+                    <a href="https://www.instagram.com/c10h15n.20/" class="text-light me-2" target="_blank"><i class="bi bi-instagram"></i></a>
+                    <a href="#" class="text-light"><i class="bi bi-twitter"></i></a>
+                </div>
+            </div>
+        </div>
+    </footer>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
+    <script src="assets/js/funciones.js"></script>
+
+    <!-- ================= RESUMEN DE MEJORAS =================
+        Se agregaron comentarios explicativos en cada bloque principal.
+        Se mejoró la estructura para facilitar la comprensión y mantenimiento.
+        Todas las imágenes tienen atributo alt.
+        El botón de carrito tiene aria-label.
+        Se eliminó código innecesario y se mantuvo la accesibilidad.
+    ========================================================= -->
+</body>
+</html>
