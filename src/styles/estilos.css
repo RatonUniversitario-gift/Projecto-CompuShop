@@ -342,3 +342,178 @@ header {
   box-shadow: 0 0 24px rgba(255, 255, 255, 0.8);
   transform: scale(1.03);
 }
+/* === Carrito de compras mejorado === */
+.table {
+  background-color: transparent;
+  border-collapse: separate;
+  border-spacing: 0 10px;
+}
+
+.table th {
+  text-transform: uppercase;
+  font-size: 0.85rem;
+  letter-spacing: 0.5px;
+}
+
+.table td {
+  vertical-align: middle;
+}
+
+.btn-detalle {
+  background-color: #ffffff !important;
+  color: #000 !important;
+  font-weight: 600;
+  border: none;
+  border-radius: 20px;
+  transition: all 0.3s ease;
+  box-shadow: 0 0 10px rgba(255, 255, 255, 0.4);
+}
+
+.btn-detalle:hover {
+  background-color: #e9ecef !important;
+  color: #000 !important;
+  box-shadow: 0 0 20px rgba(255, 255, 255, 0.6);
+  transform: scale(1.05);
+}
+
+.text-glow {
+  text-shadow: 0 0 10px #ffffffaa, 0 0 20px #ffffff77;
+}
+/* === Carrito TechNova === */
+.table {
+  background-color: transparent;
+  border-collapse: separate;
+  border-spacing: 0 10px;
+}
+
+.table th {
+  text-transform: uppercase;
+  font-size: 0.85rem;
+  letter-spacing: 0.5px;
+}
+
+.table td {
+  vertical-align: middle;
+}
+
+.btn-detalle {
+  background-color: #ffffff !important;
+  color: #000 !important;
+  font-weight: 600;
+  border: none;
+  border-radius: 20px;
+  transition: all 0.3s ease;
+  box-shadow: 0 0 10px rgba(255, 255, 255, 0.4);
+}
+
+.btn-detalle:hover {
+  background-color: #e9ecef !important;
+  color: #000 !important;
+  box-shadow: 0 0 20px rgba(255, 255, 255, 0.6);
+  transform: scale(1.05);
+}
+
+.text-glow {
+  text-shadow: 0 0 10px #ffffffaa, 0 0 20px #ffffff77;
+}
+/* === Estilos Carrito TechNova mejorado === */
+.table {
+  background-color: transparent;
+  border-collapse: separate;
+  border-spacing: 0 10px;
+}
+
+.table th {
+  text-transform: uppercase;
+  font-size: 0.85rem;
+  letter-spacing: 0.5px;
+}
+
+.table td {
+  vertical-align: middle;
+}
+
+/* Botón "Vaciar carrito" igual que "Ver detalle" */
+.btn-detalle {
+  background-color: #ffffff !important;
+  color: #000 !important;
+  font-weight: 600;
+  border: none;
+  border-radius: 20px;
+  transition: all 0.3s ease;
+  box-shadow: 0 0 10px rgba(255, 255, 255, 0.4);
+}
+.btn-detalle:hover {
+  background-color: #e9ecef !important;
+  color: #000 !important;
+  box-shadow: 0 0 20px rgba(255, 255, 255, 0.6);
+  transform: scale(1.05);
+}
+
+/* Botón rojo permanente para quitar productos */
+.btn-rojo {
+  background-color: #dc3545 !important;
+  color: #fff !important;
+  font-weight: 600;
+  border-radius: 20px;
+  border: none;
+  transition: all 0.3s ease;
+}
+.btn-rojo:hover {
+  background-color: #ff4d5a !important;
+  transform: scale(1.05);
+  box-shadow: 0 0 12px rgba(255, 50, 50, 0.6);
+}
+
+.text-glow {
+  text-shadow: 0 0 10px #ffffffaa, 0 0 20px #ffffff77;
+}
+/* === Modal de compra realizada === */
+.compra-modal {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.85);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 9999;
+  animation: fadeIn 0.4s ease;
+}
+.fade-in {
+  animation: fadeIn 0.4s ease;
+}
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+/* === Botón verde eléctrico con brillo === */
+.btn-verde {
+  background: linear-gradient(90deg, #00ff7f 0%, #00e676 100%) !important;
+  border: none;
+  color: #000 !important;
+  font-weight: 700;
+  border-radius: 25px;
+  letter-spacing: 0.5px;
+  transition: all 0.3s ease-in-out;
+  box-shadow: 0 0 15px rgba(0, 255, 127, 0.4);
+}
+.btn-verde:hover {
+  box-shadow: 0 0 25px rgba(0, 255, 127, 0.8), 0 0 50px rgba(0, 255, 127, 0.4);
+  transform: scale(1.05);
+}
+
+/* Botón rojo (Quitar) */
+.btn-rojo {
+  background-color: #dc3545 !important;
+  color: #fff !important;
+  font-weight: 600;
+  border-radius: 20px;
+  border: none;
+  transition: all 0.3s ease;
+}
+.btn-rojo:hover {
+  background-color: #ff4d5a !important;
+  transform: scale(1.05);
+  box-shadow: 0 0 12px rgba(255, 50, 50, 0.6);
+}

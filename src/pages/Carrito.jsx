@@ -1,11 +1,19 @@
 import { useCart } from "../context/CartContext.jsx";
 import SeccionBase from "../components/SeccionBase.jsx";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import { useState } from "react";
 
 export default function Carrito() {
   const { cart, increment, decrement, removeFromCart, clearCart } = useCart();
-  const total = cart.reduce((s, p) => s + (p.precio || 0) * (p.quantity || 1), 0);
+  const total = cart.reduce(
+    (s, p) => s + (p.precio || 0) * (p.quantity || 1),
+    0
+  );
 
+  const navigate = useNavigate();
+  const [compraRealizada, setCompraRealizada] = useState(false);
+
+  // 🛒 Si el carrito está vacío
   if (!cart || cart.length === 0) {
     return (
       <SeccionBase titulo="Tu carrito está vacío 😢">
@@ -21,62 +29,167 @@ export default function Carrito() {
     );
   }
 
+  // ✨ Imagen segura desde Xano
+  const getImage = (item) => {
+    const img =
+      item.imagenes?.[0]?.path ||
+      item.imagenes?.[0]?.url ||
+      item.imagenes?.[0]?.file_path ||
+      item.imagenes?.path ||
+      "/assets/img/placeholder.png";
+
+    if (img.startsWith("http")) return img;
+    const BASE = "https://x8ki-letl-twmt.n7.xano.io";
+    return `${BASE}${img.startsWith("/") ? "" : "/"}${img}`;
+  };
+
+  // ✅ Acción de compra
+  const handleCompra = () => {
+    setCompraRealizada(true);
+    clearCart();
+    setTimeout(() => navigate("/"), 2500); // redirigir después de 2.5s
+  };
+
   return (
     <SeccionBase titulo="Tu Carrito de Compras">
-      <div className="container text-light">
-        {cart.map((item) => (
-          <div
-            key={item.id}
-            className="d-flex justify-content-between align-items-center bg-dark p-3 mb-3 rounded border border-primary"
-          >
-            <div className="d-flex align-items-center gap-3">
-              {item?.imagenes?.[0]?.path && (
-                <img
-                  src={item.imagenes[0].path}
-                  alt={item.nombre}
-                  style={{ width: 72, height: 72, objectFit: "contain", background: "#0b0c10", borderRadius: 8 }}
-                />
-              )}
-              <div>
-                <h5 className="mb-1">{item.nombre}</h5>
-                <div className="small text-secondary">
-                  <span className="text-success fw-semibold">
-                    ${Number(item.precio || 0).toLocaleString()}
-                  </span>{" "}
-                  c/u
-                </div>
-              </div>
-            </div>
-
-            <div className="d-flex align-items-center gap-2">
-              <button className="btn btn-outline-light btn-sm" onClick={() => decrement(item.id)}>-</button>
-              <span className="badge bg-secondary">{item.quantity || 1}</span>
-              <button className="btn btn-outline-light btn-sm" onClick={() => increment(item.id)}>+</button>
-            </div>
-
-            <div className="text-end">
-              <div className="text-light fw-bold">
-                ${(Number(item.precio || 0) * (item.quantity || 1)).toLocaleString()}
-              </div>
-              <button className="btn btn-outline-danger btn-sm mt-2" onClick={() => removeFromCart(item.id)}>
-                Quitar
-              </button>
+      <div className="container text-light py-3">
+        {/* 💚 Modal de confirmación */}
+        {compraRealizada && (
+          <div className="compra-modal fade-in">
+            <div className="modal-content bg-dark text-white text-center p-4 rounded-4 border border-success shadow-lg">
+              <i className="bi bi-check-circle-fill text-success display-3 mb-3"></i>
+              <h4 className="fw-bold mb-2">¡Compra realizada con éxito!</h4>
+              <p className="text-secondary mb-0">
+                Serás redirigido al inicio en unos segundos...
+              </p>
             </div>
           </div>
-        ))}
+        )}
 
-        <hr className="border-primary" />
-        <div className="d-flex justify-content-between align-items-center">
-          <button className="btn btn-outline-light" onClick={clearCart}>
+        <div className="table-responsive">
+          <table className="table align-middle text-white">
+            <thead>
+              <tr className="text-primary border-bottom border-primary">
+                <th>Producto</th>
+                <th className="text-center">Cantidad</th>
+                <th className="text-center">Precio</th>
+                <th className="text-center">Subtotal</th>
+                <th></th>
+              </tr>
+            </thead>
+            <tbody>
+              {cart.map((item) => {
+                const imagen = getImage(item);
+                const subtotal =
+                  Number(item.precio || 0) * (item.quantity || 1);
+
+                return (
+                  <tr
+                    key={item.id}
+                    className="align-middle border-bottom border-secondary"
+                  >
+                    {/* 🖼 Imagen + Nombre */}
+                    <td>
+                      <div className="d-flex align-items-center gap-3">
+                        <img
+                          src={imagen}
+                          alt={item.nombre}
+                          onError={(e) =>
+                            (e.target.src = "/assets/img/placeholder.png")
+                          }
+                          style={{
+                            width: 72,
+                            height: 72,
+                            objectFit: "contain",
+                            background: "#0b0c10",
+                            borderRadius: 10,
+                            boxShadow: "0 0 12px rgba(0,180,216,0.4)",
+                          }}
+                        />
+                        <div>
+                          <h6 className="mb-1 fw-bold">{item.nombre}</h6>
+                          <small className="text-secondary">
+                            {item.marca || "TechNova"} |{" "}
+                            <span className="text-success fw-semibold">
+                              ${Number(item.precio).toLocaleString()}
+                            </span>{" "}
+                            c/u
+                          </small>
+                        </div>
+                      </div>
+                    </td>
+
+                    {/* 🔢 Cantidad */}
+                    <td className="text-center">
+                      <div className="d-flex justify-content-center align-items-center gap-2">
+                        <button
+                          className="btn btn-outline-light btn-sm rounded-circle px-2"
+                          onClick={() => decrement(item.id)}
+                        >
+                          <i className="bi bi-dash-lg"></i>
+                        </button>
+                        <span className="badge bg-secondary fs-6 px-3">
+                          {item.quantity || 1}
+                        </span>
+                        <button
+                          className="btn btn-outline-light btn-sm rounded-circle px-2"
+                          onClick={() => increment(item.id)}
+                        >
+                          <i className="bi bi-plus-lg"></i>
+                        </button>
+                      </div>
+                    </td>
+
+                    {/* 💰 Precio y Subtotal */}
+                    <td className="text-center text-success fw-bold">
+                      ${Number(item.precio).toLocaleString()}
+                    </td>
+                    <td className="text-center text-success fw-bold">
+                      ${subtotal.toLocaleString()}
+                    </td>
+
+                    {/* 🗑 Quitar */}
+                    <td className="text-center">
+                      <button
+                        className="btn btn-rojo btn-sm"
+                        onClick={() => removeFromCart(item.id)}
+                      >
+                        <i className="bi bi-x-circle me-1"></i> Quitar
+                      </button>
+                    </td>
+                  </tr>
+                );
+              })}
+            </tbody>
+          </table>
+        </div>
+
+        <hr className="border-primary my-4" />
+
+        {/* ⚙️ Totales y acciones */}
+        <div className="d-flex flex-wrap justify-content-between align-items-center gap-3">
+          <button
+            className="btn btn-detalle px-4 fw-semibold"
+            onClick={clearCart}
+          >
             Vaciar carrito
           </button>
-          <h4 className="mb-0 text-white">
-            Total: <span className="text-white fw-bold">${total.toLocaleString()}</span>
+
+          <h4 className="mb-0 fw-bold text-white">
+            Total:{" "}
+            <span className="text-white text-glow fs-3">
+              ${total.toLocaleString()}
+            </span>
           </h4>
         </div>
 
-        <div className="text-end mt-3">
-          <button className="btn btn-morado">Compra realizada</button>
+        <div className="text-end mt-4">
+          <button
+            className="btn btn-verde btn-lg px-5 shadow-lg"
+            onClick={handleCompra}
+          >
+            <i className="bi bi-bag-check me-2"></i>Realizar compra
+          </button>
         </div>
       </div>
     </SeccionBase>

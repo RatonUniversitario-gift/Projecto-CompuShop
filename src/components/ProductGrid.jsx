@@ -1,4 +1,3 @@
-// src/components/ProductGrid.jsx
 import React, { useEffect, useState } from "react";
 import { listProducts } from "../api/xano.js";
 import { Link } from "react-router-dom";
@@ -40,15 +39,11 @@ export default function ProductGrid({ token }) {
     <div className="row g-4 justify-content-center">
       {productos.map((p) => {
         const precio = Number(p.precio || 0).toLocaleString("es-CL");
-        // Intentar obtener la imagen de diferentes formas posibles
         const imagen =
           p.imagenes?.[0]?.url ||
           p.imagenes?.[0] ||
           "https://via.placeholder.com/300x200?text=Sin+Imagen";
-        
-          
 
-    
         return (
           <div key={p.id} className="col-12 col-sm-6 col-md-4 col-lg-3">
             <div className="card tarjeta-producto h-100 bg-dark text-white border-primary shadow-sm hover-scale">
@@ -59,11 +54,6 @@ export default function ProductGrid({ token }) {
                   className="card-img-top rounded-top"
                   style={{ height: "220px", objectFit: "contain", padding: "10px" }}
                 />
-                {p.descuento ? (
-                  <span className="badge bg-success position-absolute top-0 start-0 m-2">
-                    -{p.descuento}%
-                  </span>
-                ) : null}
                 {p.stock > 0 ? (
                   <span className="badge bg-secondary position-absolute top-0 end-0 m-2">
                     En stock
@@ -85,9 +75,7 @@ export default function ProductGrid({ token }) {
 
                 <div className="mt-auto">
                   <div className="d-flex justify-content-between align-items-center">
-                    <span className="fw-bold text-primary fs-6">
-                      ${precio}
-                    </span>
+                    <span className="fw-bold text-primary fs-6">${precio}</span>
                     <button
                       className="btn btn-naranja btn-sm"
                       onClick={() => addToCart(p)}
@@ -96,9 +84,10 @@ export default function ProductGrid({ token }) {
                     </button>
                   </div>
 
+                  {/* 🔹 Botón blanco permanente */}
                   <Link
                     to={`/producto/${p.id}`}
-                    className="btn btn-outline-primary btn-sm mt-3 w-100"
+                    className="btn btn-detalle btn-sm mt-3 w-100"
                   >
                     Ver detalles
                   </Link>
