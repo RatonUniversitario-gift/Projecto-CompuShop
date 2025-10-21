@@ -19,10 +19,7 @@ export async function createProduct(token, payload) {
     stock: Number(payload.stock ?? payload.existencias ?? 0),
     marca: payload.brand ?? payload.marca ?? "",
     categoria:
-      payload.category ??
-      payload.categoria ??
-      payload.categoría ??
-      "",
+      payload.category ?? payload.categoria ?? payload.categoría ?? "",
     activo: payload.activo ?? true,
   };
 
@@ -53,16 +50,12 @@ export async function createProduct(token, payload) {
       .filter((i) => i.path);
   }
 
-  const { data } = await axios.post(
-    `${STORE_BASE}/product`,
-    adaptedPayload,
-    {
-      headers: {
-        ...makeAuthHeader(token),
-        "Content-Type": "application/json",
-      },
-    }
-  );
+  const { data } = await axios.post(`${STORE_BASE}/product`, adaptedPayload, {
+    headers: {
+      ...makeAuthHeader(token),
+      "Content-Type": "application/json",
+    },
+  });
 
   return data;
 }
@@ -154,10 +147,7 @@ export async function updateProduct(token, id, payload) {
     stock: Number(payload.stock ?? payload.existencias ?? 0),
     marca: payload.brand ?? payload.marca ?? "",
     categoria:
-      payload.category ??
-      payload.categoria ??
-      payload.categoría ??
-      "",
+      payload.category ?? payload.categoria ?? payload.categoría ?? "",
     activo: payload.activo ?? true,
   };
 
@@ -176,10 +166,9 @@ export async function updateProduct(token, id, payload) {
 }
 
 // ----------------------
-// Carrito: helpers básicos
+// Carrito y pedidos
 export async function getOrCreateCart(token, userId) {
   if (!userId) throw new Error("userId es obligatorio para el carrito");
-  // Intento: obtener carritos del usuario
   let carts = [];
   try {
     const { data } = await axios.get(`${STORE_BASE}/cart`, {
@@ -188,84 +177,59 @@ export async function getOrCreateCart(token, userId) {
     });
     carts = Array.isArray(data) ? data : [];
   } catch {
-    // Si falla filtros, obtenemos todos y filtramos en cliente
     const { data } = await axios.get(`${STORE_BASE}/cart`, {
       headers: makeAuthHeader(token),
     });
     carts = Array.isArray(data) ? data : [];
   }
-  const openCart = carts.find((c) => (c.user_id === userId) && (c.estado !== 'cerrado'));
+  const openCart = carts.find(
+    (c) => c.user_id === userId && c.estado !== "cerrado"
+  );
   if (openCart) return openCart;
-  const { data: created } = await axios.post(`${STORE_BASE}/cart`, {
-    user_id: userId,
-    estado: 'abierto',
-    total: 0,
-  }, { headers: { ...makeAuthHeader(token), "Content-Type": "application/json" } });
+  const { data: created } = await axios.post(
+    `${STORE_BASE}/cart`,
+    {
+      user_id: userId,
+      estado: "abierto",
+      total: 0,
+    },
+    {
+      headers: {
+        ...makeAuthHeader(token),
+        "Content-Type": "application/json",
+      },
+    }
+  );
   return created;
 }
 
 export async function listCartItems(token, cartId) {
   if (!cartId) throw new Error("cartId es obligatorio");
-  try {
-    const { data } = await axios.get(`${STORE_BASE}/cart_item`, {
-      headers: makeAuthHeader(token),
-      params: { cart_id: cartId },
-    });
-    const arr = Array.isArray(data) ? data : [];
-    // Si el filtro del backend no aplica, filtramos aquí
-    return arr.filter((ci) => ci.cart_id === cartId);
-  } catch {
-    const { data } = await axios.get(`${STORE_BASE}/cart_item`, {
-      headers: makeAuthHeader(token),
-    });
-    const arr = Array.isArray(data) ? data : [];
-    return arr.filter((ci) => ci.cart_id === cartId);
-  }
-}
-
-export async function addItemToCart(token, { cartId, productId, cantidad = 1 }) {
-  if (!cartId || !productId) throw new Error("cartId y productId son obligatorios");
-  const { data } = await axios.post(`${STORE_BASE}/cart_item`, {
-    cart_id: cartId,
-    product_id: productId,
-    cantidad: Number(cantidad ?? 1),
-  }, { headers: { ...makeAuthHeader(token), "Content-Type": "application/json" } });
-  await recalculateCartTotal(token, cartId);
-  return data;
-}
-
-export async function updateCartItemQty(token, itemId, cantidad) {
-  if (!itemId) throw new Error("itemId es obligatorio");
-  const { data } = await axios.patch(`${STORE_BASE}/cart_item/${itemId}`, {
-    cantidad: Number(cantidad ?? 1),
-  }, { headers: { ...makeAuthHeader(token), "Content-Type": "application/json" } });
-  // Intentamos obtener el cartId del item para recalcular
-  try {
-    const { data: item } = await axios.get(`${STORE_BASE}/cart_item/${itemId}`, { headers: makeAuthHeader(token) });
-    if (item?.cart_id) await recalculateCartTotal(token, item.cart_id);
-  } catch { /* noop */ }
-  return data;
-}
-
-export async function removeItemFromCart(token, itemId, cartId) {
-  if (!itemId) throw new Error("itemId es obligatorio");
-  const { data } = await axios.delete(`${STORE_BASE}/cart_item/${itemId}`, { headers: makeAuthHeader(token) });
-  if (cartId) await recalculateCartTotal(token, cartId);
-  return data;
+  const { data } = await axios.get(`${STORE_BASE}/cart_item`, {
+    headers: makeAuthHeader(token),
+    params: { cart_id: cartId },
+  });
+  const arr = Array.isArray(data) ? data : [];
+  return arr.filter((ci) => ci.cart_id === cartId);
 }
 
 export async function getProduct(token, id) {
   if (!id) throw new Error("ID de producto obligatorio");
-  const { data } = await axios.get(`${STORE_BASE}/product/${id}`, { headers: makeAuthHeader(token) });
+  const { data } = await axios.get(`${STORE_BASE}/product/${id}`, {
+    headers: makeAuthHeader(token),
+  });
   return data;
 }
 
 export async function getCartWithItems(token, cartId) {
-  if (!cartId) throw new Error("cartId es obligatorio");
-  const { data: cart } = await axios.get(`${STORE_BASE}/cart/${cartId}`, { headers: makeAuthHeader(token) });
+  const { data: cart } = await axios.get(`${STORE_BASE}/cart/${cartId}`, {
+    headers: makeAuthHeader(token),
+  });
   const items = await listCartItems(token, cartId);
   const ids = [...new Set(items.map((i) => i.product_id))];
-  const products = await Promise.all(ids.map((id) => getProduct(token, id).catch(() => ({ id, precio: 0 }))));
+  const products = await Promise.all(
+    ids.map((id) => getProduct(token, id).catch(() => ({ id, precio: 0 })))
+  );
   const priceMap = new Map(products.map((p) => [p.id, Number(p.precio ?? 0)]));
   const itemsDetailed = items.map((i) => ({
     ...i,
@@ -276,49 +240,67 @@ export async function getCartWithItems(token, cartId) {
   return { ...cart, items: itemsDetailed, totalCalculado: total };
 }
 
-export async function recalculateCartTotal(token, cartId) {
-  const summary = await getCartWithItems(token, cartId);
-  const { data } = await axios.patch(`${STORE_BASE}/cart/${cartId}`, {
-    total: summary.totalCalculado,
-    actualizado_en: new Date().toISOString(),
-  }, { headers: { ...makeAuthHeader(token), "Content-Type": "application/json" } });
-  return data?.total ?? summary.totalCalculado;
-}
+// ✅ NUEVA versión de checkoutCart con dirección y teléfono
+export async function checkoutCart(token, { user_id, direccion_envio, telefono_contacto }) {
+  if (!user_id) throw new Error("user_id es obligatorio");
 
-export async function checkoutCart(token, cartId) {
-  if (!cartId) throw new Error("cartId es obligatorio");
-  const summary = await getCartWithItems(token, cartId);
-  const cartResp = await axios.get(`${STORE_BASE}/cart/${cartId}`, { headers: makeAuthHeader(token) });
-  const cart = cartResp.data;
+  // Obtener el carrito abierto
+  const carts = await axios.get(`${STORE_BASE}/cart`, {
+    headers: makeAuthHeader(token),
+    params: { user_id },
+  });
+  const openCart = Array.isArray(carts.data)
+    ? carts.data.find((c) => c.estado !== "cerrado")
+    : null;
+  if (!openCart) throw new Error("No se encontró carrito abierto.");
+
+  const summary = await getCartWithItems(token, openCart.id);
+
   const orderPayload = {
-    user_id: cart.user_id,
+    user_id,
     total: summary.totalCalculado,
-    estado: 'pendiente',
+    direccion_envio,
+    telefono_contacto,
+    estado: "pendiente",
     fecha: new Date().toISOString(),
   };
+
+  // Crear pedido
   const { data: order } = await axios.post(`${STORE_BASE}/order`, orderPayload, {
     headers: { ...makeAuthHeader(token), "Content-Type": "application/json" },
   });
-  // Crear order_items para cada item
-  await Promise.all(summary.items.map((it) => axios.post(`${STORE_BASE}/order_item`, {
-    order_id: order.id,
-    product_id: it.product_id,
-    cantidad: Number(it.cantidad ?? 0),
-    precio_unitario: Number(it.precio_unitario ?? 0),
-    subtotal: Number(it.subtotal ?? 0),
-  }, { headers: { ...makeAuthHeader(token), "Content-Type": "application/json" } })));
+
+  // Crear order_items
+  await Promise.all(
+    summary.items.map((it) =>
+      axios.post(
+        `${STORE_BASE}/order_item`,
+        {
+          order_id: order.id,
+          product_id: it.product_id,
+          cantidad: Number(it.cantidad ?? 0),
+          precio_unitario: Number(it.precio_unitario ?? 0),
+          subtotal: Number(it.subtotal ?? 0),
+        },
+        {
+          headers: { ...makeAuthHeader(token), "Content-Type": "application/json" },
+        }
+      )
+    )
+  );
+
   // Cerrar carrito
-  await axios.patch(`${STORE_BASE}/cart/${cartId}`, { estado: 'cerrado', total: summary.totalCalculado }, {
-    headers: { ...makeAuthHeader(token), "Content-Type": "application/json" },
-  });
-  // Vaciar items del carrito
-  const items = await listCartItems(token, cartId);
-  await Promise.allSettled(items.map((it) => axios.delete(`${STORE_BASE}/cart_item/${it.id}`, { headers: makeAuthHeader(token) })));
-  return { order, total: summary.totalCalculado, items_count: summary.items.length };
+  await axios.patch(
+    `${STORE_BASE}/cart/${openCart.id}`,
+    { estado: "cerrado", total: summary.totalCalculado },
+    { headers: { ...makeAuthHeader(token), "Content-Type": "application/json" } }
+  );
+
+  return order;
 }
 
 // ----------------------
-// Listar usuarios
+// Listar usuarios (solo lectura)
 export async function listUsers({ token, limit = 100, offset = 0, q = "" } = {}) {
   const params = {};
   if (limit != null) params.limit = limit;

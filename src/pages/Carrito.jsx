@@ -1,27 +1,36 @@
+// src/pages/Carrito.jsx
 import { useCart } from "../context/CartContext.jsx";
 import SeccionBase from "../components/SeccionBase.jsx";
 import { Link, useNavigate } from "react-router-dom";
 import { useState } from "react";
+import { useAuth } from "../context/AuthContext.jsx";
 
 export default function Carrito() {
   const { cart, increment, decrement, removeFromCart, clearCart } = useCart();
+  const { user } = useAuth();
+  const navigate = useNavigate();
+
+  const [compraRealizada, setCompraRealizada] = useState(false);
   const total = cart.reduce(
     (s, p) => s + (p.precio || 0) * (p.quantity || 1),
     0
   );
 
-  const navigate = useNavigate();
-  const [compraRealizada, setCompraRealizada] = useState(false);
-
   // 🛒 Si el carrito está vacío
   if (!cart || cart.length === 0) {
     return (
-      <SeccionBase titulo="Tu carrito está vacío 😢">
-        <div className="text-center">
-          <p className="text-secondary mb-4">
+      <SeccionBase titulo="Tu carrito está vacío 🛒">
+        <div
+          className="text-center d-flex flex-column justify-content-center align-items-center"
+          style={{ minHeight: "60vh" }}
+        >
+          <p className="text-white mb-4">
             Aún no has agregado productos a tu carrito.
           </p>
-          <Link to="/productos" className="btn btn-morado btn-lg shadow-sm px-4">
+          <Link
+            to="/productos"
+            className="btn btn-morado btn-lg shadow-sm px-4"
+          >
             Ir al catálogo
           </Link>
         </div>
@@ -29,7 +38,7 @@ export default function Carrito() {
     );
   }
 
-  // ✨ Imagen segura desde Xano
+  // 🖼 Imagen segura desde Xano
   const getImage = (item) => {
     const img =
       item.imagenes?.[0]?.path ||
@@ -43,33 +52,38 @@ export default function Carrito() {
     return `${BASE}${img.startsWith("/") ? "" : "/"}${img}`;
   };
 
-  // ✅ Acción de compra
-  const handleCompra = () => {
-    setCompraRealizada(true);
-    clearCart();
-    setTimeout(() => navigate("/"), 2500); // redirigir después de 2.5s
+  // 🚫 Bloquear acceso al checkout si no hay sesión iniciada
+  const handleCheckout = () => {
+    if (!user) {
+      alert("⚠️ Debes iniciar sesión para continuar con la compra.");
+      navigate("/login");
+      return;
+    }
+    navigate("/checkout");
   };
 
   return (
     <SeccionBase titulo="Tu Carrito de Compras">
-      <div className="container text-light py-3">
-        {/* 💚 Modal de confirmación */}
-        {compraRealizada && (
-          <div className="compra-modal fade-in">
-            <div className="modal-content bg-dark text-white text-center p-4 rounded-4 border border-success shadow-lg">
-              <i className="bi bi-check-circle-fill text-success display-3 mb-3"></i>
-              <h4 className="fw-bold mb-2">¡Compra realizada con éxito!</h4>
-              <p className="text-secondary mb-0">
-                Serás redirigido al inicio en unos segundos...
-              </p>
-            </div>
-          </div>
-        )}
-
+      <div
+        className="container py-3"
+        style={{
+          backgroundColor: "#101820",
+          borderRadius: "10px",
+          padding: "1.5rem",
+          boxShadow: "0 0 15px rgba(0,180,216,0.2)",
+        }}
+      >
+        {/* 🧾 Tabla de productos */}
         <div className="table-responsive">
-          <table className="table align-middle text-white">
+          <table className="table align-middle">
             <thead>
-              <tr className="text-primary border-bottom border-primary">
+              <tr
+                style={{
+                  backgroundColor: "#0b0c10",
+                  borderBottom: "2px solid #00b4d8",
+                  color: "#fff",
+                }}
+              >
                 <th>Producto</th>
                 <th className="text-center">Cantidad</th>
                 <th className="text-center">Precio</th>
@@ -86,7 +100,11 @@ export default function Carrito() {
                 return (
                   <tr
                     key={item.id}
-                    className="align-middle border-bottom border-secondary"
+                    style={{
+                      backgroundColor: "#ffffff", // 💡 fondo claro
+                      color: "#000000", // 💬 texto negro
+                      borderBottom: "1px solid #ccc",
+                    }}
                   >
                     {/* 🖼 Imagen + Nombre */}
                     <td>
@@ -101,16 +119,23 @@ export default function Carrito() {
                             width: 72,
                             height: 72,
                             objectFit: "contain",
-                            background: "#0b0c10",
+                            background: "#f5f5f5",
                             borderRadius: 10,
-                            boxShadow: "0 0 12px rgba(0,180,216,0.4)",
+                            boxShadow: "0 0 8px rgba(0,0,0,0.2)",
                           }}
                         />
                         <div>
-                          <h6 className="mb-1 fw-bold">{item.nombre}</h6>
-                          <small className="text-secondary">
+                          <h6 className="mb-1 fw-bold text-dark">
+                            {item.nombre}
+                          </h6>
+                          <small style={{ color: "#333" }}>
                             {item.marca || "TechNova"} |{" "}
-                            <span className="text-success fw-semibold">
+                            <span
+                              style={{
+                                color: "#00cc66", // 💚 verde oscuro legible sobre blanco
+                                fontWeight: "bold",
+                              }}
+                            >
                               ${Number(item.precio).toLocaleString()}
                             </span>{" "}
                             c/u
@@ -123,35 +148,72 @@ export default function Carrito() {
                     <td className="text-center">
                       <div className="d-flex justify-content-center align-items-center gap-2">
                         <button
-                          className="btn btn-outline-light btn-sm rounded-circle px-2"
+                          className="btn btn-sm rounded-circle fw-bold"
+                          style={{
+                            backgroundColor: "#00b4d8",
+                            color: "#fff",
+                            border: "none",
+                            width: "32px",
+                            height: "32px",
+                            lineHeight: "1",
+                          }}
                           onClick={() => decrement(item.id)}
                         >
-                          <i className="bi bi-dash-lg"></i>
+                          −
                         </button>
-                        <span className="badge bg-secondary fs-6 px-3">
+
+                        <span
+                          className="badge fs-6 px-3"
+                          style={{
+                            backgroundColor: "#0b0c10",
+                            color: "#fff",
+                            border: "1px solid #00b4d8",
+                            minWidth: "38px",
+                          }}
+                        >
                           {item.quantity || 1}
                         </span>
+
                         <button
-                          className="btn btn-outline-light btn-sm rounded-circle px-2"
+                          className="btn btn-sm rounded-circle fw-bold"
+                          style={{
+                            backgroundColor: "#00b4d8",
+                            color: "#fff",
+                            border: "none",
+                            width: "32px",
+                            height: "32px",
+                            lineHeight: "1",
+                          }}
                           onClick={() => increment(item.id)}
                         >
-                          <i className="bi bi-plus-lg"></i>
+                          +
                         </button>
                       </div>
                     </td>
 
                     {/* 💰 Precio y Subtotal */}
-                    <td className="text-center text-success fw-bold">
+                    <td
+                      className="text-center fw-bold"
+                      style={{ color: "#00cc66" }}
+                    >
                       ${Number(item.precio).toLocaleString()}
                     </td>
-                    <td className="text-center text-success fw-bold">
+                    <td
+                      className="text-center fw-bold"
+                      style={{ color: "#00cc66" }}
+                    >
                       ${subtotal.toLocaleString()}
                     </td>
 
                     {/* 🗑 Quitar */}
                     <td className="text-center">
                       <button
-                        className="btn btn-rojo btn-sm"
+                        className="btn btn-sm fw-semibold"
+                        style={{
+                          backgroundColor: "#e63946",
+                          color: "#fff",
+                          border: "none",
+                        }}
                         onClick={() => removeFromCart(item.id)}
                       >
                         <i className="bi bi-x-circle me-1"></i> Quitar
@@ -169,7 +231,11 @@ export default function Carrito() {
         {/* ⚙️ Totales y acciones */}
         <div className="d-flex flex-wrap justify-content-between align-items-center gap-3">
           <button
-            className="btn btn-detalle px-4 fw-semibold"
+            className="btn px-4 fw-semibold text-white"
+            style={{
+              backgroundColor: "#2a2d34",
+              border: "1px solid #00b4d8",
+            }}
             onClick={clearCart}
           >
             Vaciar carrito
@@ -177,18 +243,24 @@ export default function Carrito() {
 
           <h4 className="mb-0 fw-bold text-white">
             Total:{" "}
-            <span className="text-white text-glow fs-3">
+            <span style={{ color: "#7CFF7C", fontSize: "1.6rem" }}>
               ${total.toLocaleString()}
             </span>
           </h4>
         </div>
 
+        {/* 🔵 Botón principal */}
         <div className="text-end mt-4">
           <button
-            className="btn btn-verde btn-lg px-5 shadow-lg"
-            onClick={handleCompra}
+            className="btn btn-lg px-5 shadow-lg fw-semibold"
+            style={{
+              backgroundColor: "#00b4d8",
+              color: "#fff",
+              border: "none",
+            }}
+            onClick={handleCheckout}
           >
-            <i className="bi bi-bag-check me-2"></i>Realizar compra
+            <i className="bi bi-bag-check me-2"></i>Continuar con la compra
           </button>
         </div>
       </div>

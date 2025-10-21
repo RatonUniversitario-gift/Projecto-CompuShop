@@ -22,6 +22,9 @@ import Login from "./pages/Login.jsx";
 import Logout from "./pages/Logout.jsx";
 import CreateProduct from "./pages/CreateProduct.jsx";
 import Registro from "./pages/Registro.jsx";
+import Checkout from "./pages/Checkout.jsx";
+import CheckoutConfirmado from "./pages/CheckoutConfirmado.jsx";
+
 
 // === Páginas informativas ===
 import Blogs from "./pages/Blogs.jsx";
@@ -173,6 +176,27 @@ export default function App() {
                 <>
                   <Header />
                   <Logout />
+                  <Footer />
+                </>
+              }
+            />
+            <Route
+              path="/checkout"
+              element={
+                <>
+                  <Header />
+                  <Checkout />
+                  <Footer />
+                </>
+              }
+            />
+
+            <Route
+              path="/checkout-confirmado"
+              element={
+                <>
+                  <Header />
+                  <CheckoutConfirmado />
                   <Footer />
                 </>
               }
