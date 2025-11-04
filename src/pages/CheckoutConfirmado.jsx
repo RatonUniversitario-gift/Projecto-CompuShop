@@ -2,16 +2,18 @@
 import SeccionBase from "../components/SeccionBase.jsx";
 import { Link } from "react-router-dom";
 import { useEffect, useState } from "react";
+import { Alert, Button, Card, Badge, Spinner } from "react-bootstrap";
 
 export default function CheckoutConfirmado() {
   const [pedido, setPedido] = useState(null);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // Recuperar último pedido del localStorage (si se guardó antes de limpiar carrito)
     const savedOrder = localStorage.getItem("ultimoPedido");
     if (savedOrder) {
       setPedido(JSON.parse(savedOrder));
     }
+    setTimeout(() => setLoading(false), 800);
   }, []);
 
   const getImage = (item) => {
@@ -27,129 +29,144 @@ export default function CheckoutConfirmado() {
     return `${BASE}${img.startsWith("/") ? "" : "/"}${img}`;
   };
 
+  const orderNumber = pedido ? `ORD-${Math.floor(100000 + Math.random() * 900000)}` : '';
+
+  if (loading) {
+    return (
+      <SeccionBase titulo="Procesando tu pedido">
+        <div className="d-flex flex-column align-items-center justify-content-center" style={{ minHeight: "60vh" }}>
+          <Spinner animation="border" variant="primary" style={{ width: "3rem", height: "3rem" }} />
+          <p className="mt-3 text-white">Estamos procesando tu pedido...</p>
+        </div>
+      </SeccionBase>
+    );
+  }
+
+  if (!pedido) {
+    return (
+      <SeccionBase titulo="No se encontró información del pedido">
+        <Alert variant="danger" className="my-4">
+          No se encontró información del pedido. Por favor, intenta realizar la compra nuevamente.
+        </Alert>
+        <div className="text-center mt-4">
+          <Link to="/carrito">
+            <Button variant="primary">Volver al carrito</Button>
+          </Link>
+        </div>
+      </SeccionBase>
+    );
+  }
+
   return (
     <SeccionBase titulo="¡Compra realizada con éxito! 🎉">
       <div
-        className="d-flex flex-column align-items-center text-center"
+        className="container py-4"
         style={{
-          minHeight: "70vh",
           backgroundColor: "#101820",
           borderRadius: "10px",
-          padding: "3rem 1.5rem",
+          padding: "2rem",
           boxShadow: "0 0 15px rgba(0,180,216,0.2)",
         }}
       >
-        <i
-          className="bi bi-bag-check-fill mb-4"
-          style={{ color: "#00CC66", fontSize: "4rem" }}
-        ></i>
-
-        <h3
-          className="fw-bold mb-3"
-          style={{ color: "#FFFFFF", letterSpacing: "0.5px" }}
-        >
-          ¡Gracias por tu compra!
-        </h3>
-
-        <p
-          className="mb-4"
-          style={{
-            color: "rgba(255,255,255,0.85)",
-            maxWidth: "600px",
-            lineHeight: "1.6",
-          }}
-        >
-          Tu pedido ha sido confirmado exitosamente.  
-          A continuación encontrarás el detalle de tu orden:
-        </p>
-
-        {/* 🧾 Detalle del pedido */}
-        <div
-          className="p-4 my-3 text-start"
-          style={{
-            backgroundColor: "#0b0c10",
-            border: "1px solid #00b4d8",
-            borderRadius: "10px",
-            color: "#fff",
-            width: "100%",
-            maxWidth: "600px",
-            boxShadow: "0 0 12px rgba(0,180,216,0.25)",
-          }}
-        >
-          {pedido && pedido.items?.length > 0 ? (
-            <>
-              {pedido.items.map((item) => (
-                <div
-                  key={item.id}
-                  className="d-flex align-items-center justify-content-between border-bottom border-secondary py-2"
-                >
-                  <div className="d-flex align-items-center gap-3">
-                    <img
-                      src={getImage(item)}
-                      alt={item.nombre}
-                      style={{
-                        width: 48,
-                        height: 48,
-                        borderRadius: 8,
-                        objectFit: "contain",
-                        backgroundColor: "#101820",
-                      }}
-                    />
-                    <div>
-                      <strong style={{ color: "#fff" }}>{item.nombre}</strong>
-                      <div style={{ color: "#bbb", fontSize: "0.9rem" }}>
-                        {item.quantity} x ${item.precio.toLocaleString()}
-                      </div>
-                    </div>
-                  </div>
-                  <span
-                    className="fw-bold"
-                    style={{ color: "#00CC66", fontSize: "1rem" }}
-                  >
-                    ${(item.precio * item.quantity).toLocaleString()}
-                  </span>
-                </div>
-              ))}
-
-              <hr className="border-primary" />
-              <div className="d-flex justify-content-between">
-                <span>Fecha:</span>
-                <strong style={{ color: "#00CC66" }}>
-                  {new Date().toLocaleDateString("es-CL", {
-                    year: "numeric",
-                    month: "long",
-                    day: "numeric",
-                  })}
-                </strong>
-              </div>
-              <div className="d-flex justify-content-between mt-2">
-                <span>Total pagado:</span>
-                <strong style={{ color: "#00CC66", fontSize: "1.2rem" }}>
-                  ${pedido.total?.toLocaleString()}
-                </strong>
-              </div>
-            </>
-          ) : (
-            <p className="text-center text-secondary mb-0">
-              No hay información del pedido reciente.
-            </p>
-          )}
+        <div className="text-center mb-4">
+          <i className="bi bi-bag-check-fill mb-3" style={{ color: "#00CC66", fontSize: "4rem" }}></i>
+          <h3 className="fw-bold mb-3 text-white">¡Gracias por tu compra!</h3>
+          <p className="text-white mb-4">
+            Tu pedido ha sido recibido y está siendo procesado.
+            <br />
+            Te enviaremos actualizaciones sobre el estado de tu pedido.
+          </p>
+          <div className="d-flex justify-content-center mb-4">
+            <Badge bg="info" className="fs-6 px-3 py-2">
+              Número de orden: {orderNumber}
+            </Badge>
+          </div>
         </div>
 
-        {/* 🔵 Botón principal */}
-        <Link
-          to="/productos"
-          className="btn fw-semibold mt-4 px-5 py-2 shadow-lg"
-          style={{
-            backgroundColor: "#00B4D8",
-            color: "#FFFFFF",
-            border: "none",
-            fontSize: "1.1rem",
-            letterSpacing: "0.3px",
-          }}
-        >
-          <i className="bi bi-shop me-2"></i>Seguir comprando
-        </Link>
+        <Card className="mb-4" bg="dark" text="white" border="primary">
+          <Card.Header className="bg-primary text-white">
+            <h5 className="mb-0">Detalles del Pedido</h5>
+          </Card.Header>
+          <Card.Body>
+            <div className="row">
+              <div className="col-md-6 mb-3">
+                <h6 className="text-muted">Información de Envío</h6>
+                <p className="mb-1">{pedido.envio?.nombre}</p>
+                <p className="mb-1">{pedido.envio?.direccion}</p>
+                <p className="mb-1">
+                  {pedido.envio?.ciudad}, {pedido.envio?.estado} {pedido.envio?.codigoPostal}
+                </p>
+                <p className="mb-0">{pedido.envio?.telefono}</p>
+              </div>
+              <div className="col-md-6 mb-3">
+                <h6 className="text-muted">Método de Pago</h6>
+                <p className="mb-1">
+                  {pedido.pago?.tipo === "tarjeta" ? "Tarjeta de crédito" : "Transferencia bancaria"}
+                </p>
+                {pedido.pago?.tipo === "tarjeta" && (
+                  <p className="mb-0">**** **** **** {pedido.pago?.numeroTarjeta?.slice(-4)}</p>
+                )}
+              </div>
+            </div>
+
+            <h6 className="border-bottom border-secondary pb-2 mb-3 text-muted">Productos</h6>
+            {pedido.items?.map((item) => (
+              <div key={item.id} className="d-flex justify-content-between align-items-center mb-2">
+                <div className="d-flex align-items-center">
+                  <img
+                    src={getImage(item)}
+                    alt={item.nombre}
+                    style={{ width: "50px", height: "50px", objectFit: "cover", marginRight: "10px", borderRadius: "4px" }}
+                  />
+                  <div>
+                    <p className="mb-0 fw-bold">{item.nombre}</p>
+                    <small className="text-muted">Cantidad: {item.cantidad}</small>
+                  </div>
+                </div>
+                <span>${item.precio * item.cantidad}</span>
+              </div>
+            ))}
+
+            <div className="border-top border-secondary mt-3 pt-3">
+              <div className="d-flex justify-content-between">
+                <span>Subtotal</span>
+                <span>
+                  $
+                  {(pedido.items
+                    ?.reduce((total, item) => total + (parseFloat(item.precio) || 0) * (parseInt(item.cantidad) || 0), 0) || 0)
+                    .toFixed(2)}
+                </span>
+              </div>
+              <div className="d-flex justify-content-between">
+                <span>Envío</span>
+                <span>${(parseFloat(pedido.costoEnvio) || 0).toFixed(2)}</span>
+              </div>
+              <div className="d-flex justify-content-between fw-bold mt-2">
+                <span>Total</span>
+                <span>
+                  $
+                  {(
+                    (pedido.items
+                      ?.reduce((total, item) => total + (parseFloat(item.precio) || 0) * (parseInt(item.cantidad) || 0), 0) || 0)
+                    + (parseFloat(pedido.costoEnvio) || 0)
+                  ).toFixed(2)}
+                </span>
+              </div>
+            </div>
+          </Card.Body>
+        </Card>
+
+        <div className="text-center mt-4">
+          <p className="text-white mb-4">Recibirás un correo electrónico con la confirmación de tu pedido.</p>
+          <div className="d-flex justify-content-center gap-3 flex-wrap">
+            <Link to="/">
+              <Button variant="outline-light">Seguir comprando</Button>
+            </Link>
+            <Link to="/mis-pedidos">
+              <Button variant="primary">Ver mis pedidos</Button>
+            </Link>
+          </div>
+        </div>
       </div>
     </SeccionBase>
   );

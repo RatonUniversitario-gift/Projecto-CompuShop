@@ -80,9 +80,18 @@ export default function Header() {
 
             <li className="nav-item">
               {user ? (
-                <Link className="nav-link text-white" to="/logout">
-                  Logout
-                </Link>
+                <div className="dropdown">
+                  <button className="btn btn-link nav-link text-white dropdown-toggle" type="button" id="userDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                    <i className="bi bi-person-circle me-1"></i>
+                    {user.nombre || 'Mi Cuenta'}
+                  </button>
+                  <ul className="dropdown-menu dropdown-menu-dark dropdown-menu-end" aria-labelledby="userDropdown">
+                    <li><Link className="dropdown-item" to="/perfil"><i className="bi bi-person me-2"></i>Mi Perfil</Link></li>
+                    <li><Link className="dropdown-item" to="/mis-pedidos"><i className="bi bi-box me-2"></i>Mis Pedidos</Link></li>
+                    <li><hr className="dropdown-divider" /></li>
+                    <li><Link className="dropdown-item" to="/logout"><i className="bi bi-box-arrow-right me-2"></i>Cerrar Sesión</Link></li>
+                  </ul>
+                </div>
               ) : (
                 <Link className="nav-link text-white" to="/login">
                   Login

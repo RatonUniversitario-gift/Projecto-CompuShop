@@ -5,8 +5,24 @@ export default function ProductImagesSlider({ images = [], alt = 'Imagen', aspec
   // Normalizamos el arreglo de imágenes a un arreglo de URLs
   const urls = useMemo(() => {
     const arr = Array.isArray(images) ? images : [];
-    const list = arr.map((it) => (typeof it === 'string' ? it : it?.url)).filter(Boolean);
-    return list.length > 0 ? list : ['https://placehold.co/600x400?text=Sin+imagen'];
+    const BASE = "https://x8ki-letl-twmt.n7.xano.io";
+    
+    const list = arr.map((it) => {
+      if (typeof it === 'string') {
+        if (it.startsWith('http')) {
+          return it;
+        } else {
+          return `${BASE}${it.startsWith("/") ? "" : "/"}${it}`;
+        }
+      } else if (it?.url) {
+        return it.url;
+      } else if (it?.path) {
+        return `${BASE}${it.path.startsWith("/") ? "" : "/"}${it.path}`;
+      }
+      return null;
+    }).filter(Boolean);
+    
+    return list.length > 0 ? list : ['https://via.placeholder.com/600x400?text=Sin+imagen'];
   }, [images]);
 
   // Estado para el índice actual de la imagen visible

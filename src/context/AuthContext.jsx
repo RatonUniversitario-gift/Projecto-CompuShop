@@ -65,6 +65,38 @@ export function AuthProvider({ children }) {
     else localStorage.removeItem("auth_user");
   }, [user]);
 
+  // Si tenemos token pero el usuario no tiene id, derivarlo del JWT
+  useEffect(() => {
+    if (token && user && !user.id) {
+      const payload = decodeJwt(token);
+      const uid = payload?.user_id ?? payload?.id ?? payload?.sub;
+      if (uid != null) setUser((prev) => ({ ...prev, id: uid }));
+    }
+  }, [token, user]);
+
+  // Asegurar perfil completo: intentar obtener /auth/me y hacer fallback al JWT
+  useEffect(() => {
+    if (!token) return;
+    let canceled = false;
+    (async () => {
+      if (user?.id) return; // ya tenemos id
+      try {
+        const { data } = await axios.get(`${AUTH_BASE}/auth/me`, {
+          headers: makeAuthHeader(token),
+        });
+        if (!canceled) setUser((prev) => (prev ? { ...prev, ...data } : data));
+      } catch (e) {
+        const payload = decodeJwt(token);
+        const uid = payload?.user_id ?? payload?.id ?? payload?.sub;
+        if (uid != null && !canceled)
+          setUser((prev) => (prev ? { ...prev, id: uid } : { id: uid }));
+      }
+    })();
+    return () => {
+      canceled = true;
+    };
+  }, [token, user?.id]);
+
   // Headers
   const makeAuthHeader = (t) => ({ Authorization: `Bearer ${t}` });
 
@@ -77,6 +109,13 @@ export function AuthProvider({ children }) {
 
     const newToken = data?.authToken || data?.token || "";
     let newUser = data?.user || { name: data?.name || email, email };
+
+    // Asegurar ID del usuario desde el JWT si no viene en la respuesta
+    if (!newUser?.id && newToken) {
+      const payload = decodeJwt(newToken);
+      const uid = payload?.user_id ?? payload?.id ?? payload?.sub;
+      if (uid != null) newUser = { ...newUser, id: uid };
+    }
 
     // 🔥 Detectar admin según la lista de correos del .env
     const isAdmin = ADMIN_EMAILS.includes(email.toLowerCase());
@@ -100,7 +139,47 @@ export function AuthProvider({ children }) {
     setExpiresAt(null);
     localStorage.removeItem("auth_token");
     localStorage.removeItem("auth_user");
-    localStorage.removeItem("auth_exp");
+  }
+   
+  // Actualizar datos del usuario
+  function updateUserData(userData) {
+    if (!user) return null;
+    
+    // En un entorno real, aquí se haría una llamada a la API
+    const updatedUser = { ...user, ...userData };
+    setUser(updatedUser);
+    return updatedUser;
+  }
+   
+  // Bloquear/desbloquear usuario (solo para admin)
+  async function toggleUserBlock(userId, isBlocked) {
+    if (!user || user.role !== "admin") return null;
+    
+    try {
+      // Simulamos una llamada a API
+      await new Promise(resolve => setTimeout(resolve, 800));
+      
+      // En un entorno real, aquí se haría una llamada a la API
+      // Obtenemos usuarios del localStorage (simulación)
+      const usersStr = localStorage.getItem('users');
+      let users = usersStr ? JSON.parse(usersStr) : [];
+      
+      // Actualizamos el estado del usuario
+      users = users.map(u => {
+        if (u.id === userId) {
+          return { ...u, blocked: isBlocked };
+        }
+        return u;
+      });
+      
+      // Guardamos en localStorage
+      localStorage.setItem('users', JSON.stringify(users));
+      
+      return true;
+    } catch (error) {
+      console.error("Error al cambiar estado de bloqueo:", error);
+      return false;
+    }
   }
 
   // ✅ Refresh token
@@ -137,6 +216,10 @@ export function AuthProvider({ children }) {
       login,
       logout,
       refresh,
+      updateUserData,
+      toggleUserBlock,
+      isAuthenticated: !!token && !!user,
+      isAdmin: user?.role === "admin",
     }),
     [token, user, expiresAt]
   );

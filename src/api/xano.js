@@ -63,31 +63,46 @@ export async function createProduct(token, payload) {
 // ----------------------
 // 2) Subir imágenes
 export async function uploadImages(token, files) {
-  try {
-    const fd1 = new FormData();
-    for (const f of files) fd1.append("content[]", f);
-
-    const { data } = await axios.post(`${STORE_BASE}/upload/image`, fd1, {
-      headers: makeAuthHeader(token),
-    });
-
-    return Array.isArray(data) ? data : data.files || [];
-  } catch (err) {
-    const msg = err?.response?.data?.message || err.message || "";
-
-    if (err?.response?.status === 404 || /Unable to locate request/i.test(msg)) {
-      const fd2 = new FormData();
-      for (const f of files) fd2.append("files[]", f);
-
-      const { data } = await axios.post(`${STORE_BASE}/upload`, fd2, {
+  // Subimos CADA archivo individualmente a /upload/image con campo "content".
+  // Esto evita el caso observado de duplicar la misma imagen y omitir la otra.
+  const uploaded = [];
+  for (const f of files) {
+    try {
+      const fd = new FormData();
+      fd.append("content", f);
+      const { data } = await axios.post(`${STORE_BASE}/upload/image`, fd, {
         headers: makeAuthHeader(token),
       });
-
-      return Array.isArray(data) ? data : data.files || [];
+      const arr = Array.isArray(data)
+        ? data
+        : data?.images || data?.files || (data?.img ? [data.img] : []);
+      if (Array.isArray(arr) && arr.length) {
+        // Para una llamada individual, tomamos el último o único elemento.
+        uploaded.push(arr[arr.length - 1]);
+      }
+    } catch (err1) {
+      const status1 = err1?.response?.status;
+      const msg1 = err1?.response?.data?.message || err1.message || "";
+      console.warn(`Fallo al subir en /upload/image (${f.name}):`, status1, msg1);
+      // Fallback: /upload con files[] si el endpoint alterno existe
+      try {
+        const fd2 = new FormData();
+        fd2.append("files[]", f);
+        const { data: d2 } = await axios.post(`${STORE_BASE}/upload`, fd2, {
+          headers: makeAuthHeader(token),
+        });
+        const arr2 = Array.isArray(d2) ? d2 : d2?.files || d2?.images || [];
+        if (Array.isArray(arr2) && arr2.length) {
+          uploaded.push(arr2[arr2.length - 1]);
+        }
+      } catch (err2) {
+        const status2 = err2?.response?.status;
+        const msg2 = err2?.response?.data?.message || err2.message || "";
+        console.warn(`Fallo al subir en /upload (${f.name}):`, status2, msg2);
+      }
     }
-
-    throw err;
   }
+  return uploaded;
 }
 
 // ----------------------
@@ -299,6 +314,69 @@ export async function checkoutCart(token, { user_id, direccion_envio, telefono_c
   return order;
 }
 
+// ✅ Crear orden directamente desde los items del carrito local
+export async function createOrderFromItems(
+  token,
+  {
+    user_id,
+    items = [],
+    estado = "pendiente",
+    fecha = new Date().toISOString(),
+    direccion_envio,
+    telefono_contacto,
+  }
+) {
+  if (!user_id) throw new Error("user_id es obligatorio");
+  const normalized = Array.isArray(items) ? items : [];
+  const itemsDetailed = normalized.map((it) => {
+    const cantidad = Number(it.quantity ?? it.cantidad ?? 1);
+    const precio = Number(it.precio ?? it.price ?? it.precio_unitario ?? 0);
+    const product_id = Number(it.id ?? it.product_id);
+    return {
+      product_id,
+      cantidad,
+      precio_unitario: precio,
+      subtotal: cantidad * precio,
+    };
+  });
+  const total = itemsDetailed.reduce((s, i) => s + Number(i.subtotal ?? 0), 0);
+
+  const orderPayload = {
+    user_id,
+    total,
+    estado,
+    fecha,
+  };
+
+  // Adjuntar campos opcionales si existen en la tabla
+  if (direccion_envio != null) orderPayload.direccion_envio = direccion_envio;
+  if (telefono_contacto != null) orderPayload.telefono_contacto = telefono_contacto;
+
+  const { data: order } = await axios.post(`${STORE_BASE}/order`, orderPayload, {
+    headers: { ...makeAuthHeader(token), "Content-Type": "application/json" },
+  });
+
+  await Promise.all(
+    itemsDetailed.map((it) =>
+      axios.post(
+        `${STORE_BASE}/order_item`,
+        {
+          order_id: order.id,
+          product_id: it.product_id,
+          cantidad: it.cantidad,
+          precio_unitario: it.precio_unitario,
+          subtotal: it.subtotal,
+        },
+        {
+          headers: { ...makeAuthHeader(token), "Content-Type": "application/json" },
+        }
+      )
+    )
+  );
+
+  return order;
+}
+
 // ----------------------
 // Listar usuarios (solo lectura)
 export async function listUsers({ token, limit = 100, offset = 0, q = "" } = {}) {
@@ -313,4 +391,71 @@ export async function listUsers({ token, limit = 100, offset = 0, q = "" } = {})
   });
 
   return Array.isArray(data) ? data : [];
+}
+
+// ----------------------
+// Obtener todos los usuarios reales de Xano
+export async function getAllUsers(token) {
+  try {
+    const { data } = await axios.get(`https://x8ki-letl-twmt.n7.xano.io/api:K1k2AGUp/user`, {
+      headers: makeAuthHeader(token),
+    });
+    
+    return Array.isArray(data) ? data : [];
+  } catch (error) {
+    console.error("Error al obtener usuarios reales:", error);
+    return [];
+  }
+}
+
+// ----------------------
+// Órdenes
+export async function listOrders({ token, limit = 100, offset = 0, user_id } = {}) {
+  const params = {};
+  if (limit != null) params.limit = limit;
+  if (offset != null) params.offset = offset;
+  if (user_id != null) params.user_id = user_id;
+
+  const { data } = await axios.get(`${STORE_BASE}/order`, {
+    headers: makeAuthHeader(token),
+    params,
+  });
+
+  return Array.isArray(data) ? data : [];
+}
+
+export async function getOrder(token, id) {
+  if (!id) throw new Error("ID de orden obligatorio");
+  const { data } = await axios.get(`${STORE_BASE}/order/${id}`, {
+    headers: makeAuthHeader(token),
+  });
+  return data;
+}
+
+export async function listOrderItems(token, orderId) {
+  if (!orderId) throw new Error("orderId es obligatorio");
+  const { data } = await axios.get(`${STORE_BASE}/order_item`, {
+    headers: makeAuthHeader(token),
+    params: { order_id: orderId },
+  });
+  const arr = Array.isArray(data) ? data : [];
+  return arr.filter((oi) => oi.order_id === orderId);
+}
+
+export async function updateOrderStatus(token, orderId, estado, comentarios) {
+  if (!orderId) throw new Error("orderId es obligatorio");
+  const payload = {};
+  if (estado != null) payload.estado = estado;
+  if (comentarios != null) payload.comentarios = comentarios;
+  const { data } = await axios.patch(
+    `${STORE_BASE}/order/${orderId}`,
+    payload,
+    { headers: { ...makeAuthHeader(token), "Content-Type": "application/json" } }
+  );
+  return data;
+}
+
+export async function listUserOrders(token, userId, { limit = 100, offset = 0 } = {}) {
+  if (!userId) throw new Error("userId es obligatorio");
+  return listOrders({ token, user_id: userId, limit, offset });
 }

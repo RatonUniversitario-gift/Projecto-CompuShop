@@ -50,6 +50,11 @@ export default function HeaderAdmin() {
               </Link>
             </li>
             <li className="nav-item">
+              <Link className="nav-link text-white" to="/admin/ordenes">
+                Órdenes
+              </Link>
+            </li>
+            <li className="nav-item">
               <Link className="nav-link text-white" to="/admin/crear-producto">
                 Crear Producto
               </Link>

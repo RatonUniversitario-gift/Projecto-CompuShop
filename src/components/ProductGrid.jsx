@@ -39,10 +39,27 @@ export default function ProductGrid({ token }) {
     <div className="row g-4 justify-content-center">
       {productos.map((p) => {
         const precio = Number(p.precio || 0).toLocaleString("es-CL");
-        const imagen =
-          p.imagenes?.[0]?.url ||
-          p.imagenes?.[0] ||
-          "https://via.placeholder.com/300x200?text=Sin+Imagen";
+        
+        // Construir URL de imagen correctamente
+        let imagen = "https://via.placeholder.com/300x200?text=Sin+Imagen";
+        if (Array.isArray(p.imagenes) && p.imagenes.length > 0) {
+          const imgData = p.imagenes[0];
+          if (imgData?.url) {
+            imagen = imgData.url;
+          } else if (imgData?.path) {
+            const BASE = "https://x8ki-letl-twmt.n7.xano.io";
+            imagen = `${BASE}${imgData.path.startsWith("/") ? "" : "/"}${imgData.path}`;
+          } else if (typeof imgData === 'string') {
+            if (imgData.startsWith('http')) {
+              imagen = imgData;
+            } else {
+              const BASE = "https://x8ki-letl-twmt.n7.xano.io";
+              imagen = `${BASE}${imgData.startsWith("/") ? "" : "/"}${imgData}`;
+            }
+          }
+        }
+
+        const hasMultipleImages = Array.isArray(p.imagenes) && p.imagenes.length > 1;
 
         return (
           <div key={p.id} className="col-12 col-sm-6 col-md-4 col-lg-3">
@@ -54,6 +71,12 @@ export default function ProductGrid({ token }) {
                   className="card-img-top rounded-top"
                   style={{ height: "220px", objectFit: "contain", padding: "10px" }}
                 />
+                {/* Indicador de múltiples imágenes */}
+                {hasMultipleImages && (
+                  <span className="badge bg-info position-absolute top-0 start-0 m-2">
+                    <i className="bi bi-images"></i> {p.imagenes.length}
+                  </span>
+                )}
                 {p.stock > 0 ? (
                   <span className="badge bg-secondary position-absolute top-0 end-0 m-2">
                     En stock

@@ -2,6 +2,7 @@
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { AuthProvider, useAuth } from "./context/AuthContext.jsx";
 import { CartProvider } from "./context/CartContext.jsx";
+import { MessageProvider } from "./context/MessageContext.jsx";
 
 // === Estilos globales ===
 import "bootstrap/dist/css/bootstrap.min.css";
@@ -34,8 +35,13 @@ import Contacto from "./pages/Contacto.jsx";
 
 // === Páginas de administración ===
 import AdminHome from "./pages/AdminHome.jsx";
-import AdminUsuarios from "./pages/AdminUsuarios.jsx";
 import AdminProductos from "./pages/AdminProductos.jsx";
+import AdminOrdenes from "./pages/AdminOrdenes.jsx";
+import AdminUsers from "./pages/AdminUsers.jsx";
+
+// === Páginas de usuario ===
+import MisPedidos from "./pages/MisPedidos.jsx";
+import Perfil from "./pages/Perfil.jsx";
 
 /* 🔒 Ruta protegida con validación de usuario y rol */
 function PrivateRoute({ element: Component, requiredRole }) {
@@ -65,8 +71,9 @@ export default function App() {
   return (
     <AuthProvider>
       <CartProvider>
-        <BrowserRouter>
-          <Routes>
+        <MessageProvider>
+          <BrowserRouter>
+            <Routes>
             {/* === Páginas públicas === */}
             <Route
               path="/"
@@ -202,18 +209,32 @@ export default function App() {
               }
             />
 
-            {/* === Rutas del panel admin protegidas === */}
+            {/* === Rutas de administración === */}
             <Route
               path="/admin"
               element={<PrivateRoute element={<AdminHome />} requiredRole="admin" />}
             />
             <Route
-              path="/admin/usuarios"
-              element={<PrivateRoute element={<AdminUsuarios />} requiredRole="admin" />}
-            />
-            <Route
               path="/admin/productos"
               element={<PrivateRoute element={<AdminProductos />} requiredRole="admin" />}
+            />
+            <Route
+              path="/admin/usuarios"
+              element={<PrivateRoute element={<AdminUsers />} requiredRole="admin" />}
+            />
+            <Route
+              path="/admin/ordenes"
+              element={<PrivateRoute element={<AdminOrdenes />} requiredRole="admin" />}
+            />
+            
+            {/* === Rutas de usuario === */}
+            <Route
+              path="/perfil"
+              element={<PrivateRoute element={<Perfil />} />}
+            />
+            <Route
+              path="/mis-pedidos"
+              element={<PrivateRoute element={<MisPedidos />} />}
             />
             <Route
               path="/admin/crear-producto"
@@ -224,6 +245,7 @@ export default function App() {
             <Route path="*" element={<Navigate to="/" replace />} />
           </Routes>
         </BrowserRouter>
+      </MessageProvider>
       </CartProvider>
     </AuthProvider>
   );
